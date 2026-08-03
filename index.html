@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#132257">
+<title>Révisions d'ACE</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Révisions ACE">
+<style>
+:root{
+  --paper:#F4EFE4; --card:#FCF8F0; --line:#E6DCC8; --ink:#24262C; --soft:#7c7566;
+  --fr:#A5243D; --fr-d:#7a172c; --fr-bg:#F4DEE3;
+  --ma:#2F6DB0; --ma-d:#164a86; --ma-bg:#DCEAF6;
+  --an:#1D8F63; --an-d:#0f6e4e; --an-bg:#DDF1E7;
+  --ok:#2E8B57; --ok-d:#0f6e4e; --ok-bg:#EAF6EE;
+  --no:#C86B4A; --no-d:#8a3d1d; --no-bg:#FBEBE3;
+  --nav:#132257; --gold:#E9B84A;
+  --hg:#B5793C; --hg-d:#7d5320; --hg-bg:#F2E7D6;
+  --sc:#7A5AC2; --sc-d:#4a3488; --sc-bg:#E9E2F7;
+  --em:#2F8F8F; --em-d:#1f6b6b; --em-bg:#D9EFEF;
+  --scale:1;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0; padding:0;}
+body{
+  font-family:'Trebuchet MS','Segoe UI',Verdana,Tahoma,system-ui,sans-serif;
+  background:var(--paper); color:var(--ink);
+  font-size:calc(18px*var(--scale)); line-height:1.7;
+  letter-spacing:.02em; word-spacing:.06em;
+  text-align:left;
+  padding:0 0 96px 0;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:520px; margin:0 auto; padding:16px 16px 0;}
+h1,h2,h3{font-weight:normal; line-height:1.4; margin:0 0 10px;}
+h1{font-size:1.35em;} h2{font-size:1.15em;} h3{font-size:1.05em;}
+button{font-family:inherit; cursor:pointer;}
+.hidden{display:none !important;}
+
+.topbar{display:flex; align-items:center; gap:10px; margin:8px 0 18px;}
+.avatar{width:46px;height:46px;border-radius:50%;background:var(--fr);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.2em;flex:0 0 auto;}
+.hello{font-size:1.2em;}
+.date{font-size:.82em;color:var(--soft);}
+.aa{margin-left:auto;display:flex;gap:6px;}
+.aa button{background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--soft);padding:6px 10px;font-size:.85em;}
+.aa button.on{background:var(--fr-bg);color:var(--fr-d);border-color:var(--fr);}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:0 0 14px;}
+.card .lbl{font-size:.82em;color:var(--soft);margin-bottom:4px;}
+.big{font-size:1.15em;margin-bottom:12px;}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.chip{padding:6px 12px;border-radius:12px;font-size:.85em;display:inline-flex;align-items:center;gap:6px;}
+.chip.fr{background:var(--fr-bg);color:var(--fr-d);} .chip.ma{background:var(--ma-bg);color:var(--ma-d);} .chip.an{background:var(--an-bg);color:var(--an-d);}
+.ic{width:1em;height:1em;display:inline-block;vertical-align:-.12em;}
+
+.btn{display:block;width:100%;border:none;border-radius:14px;padding:15px;font-size:1.05em;text-align:center;}
+.btn-fr{background:var(--fr);color:#fff;} .btn-ma{background:var(--ma);color:#fff;}
+.btn-ghost{background:var(--card);border:1px solid var(--line);color:var(--ink);}
+.btn-ok{background:var(--ok);color:#fff;}
+.btn:disabled{opacity:.55;}
+
+.mini{font-size:.9em;}
+.fichelink{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:8px;}
+.dot{width:12px;height:12px;border-radius:50%;flex:0 0 auto;}
+.dot.fr{background:var(--fr);} .dot.ma{background:var(--ma);} .dot.an{background:var(--an);}
+.fichelink .go{margin-left:auto;color:var(--soft);}
+.done-badge{color:var(--ok-d);font-size:.9em;}
+
+/* Calendar */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;}
+.cal .h{font-size:.72em;color:var(--soft);text-align:center;padding:2px 0;}
+.day{aspect-ratio:1/1;border-radius:12px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.95em;position:relative;padding:2px;}
+.day .n{font-size:1em;}
+.day .s{font-size:.62em;margin-top:2px;line-height:1;}
+.day.todo{border:2px solid var(--fr);background:var(--fr-bg);color:var(--fr-d);}
+.day.late{border:2px solid var(--an);background:var(--an-bg);color:var(--an-d);}
+.day.done{background:var(--ok-bg);border-color:var(--ok);color:var(--ok-d);}
+.day.lock{opacity:.45;}
+.day.empty{border:none;background:transparent;}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8em;color:var(--soft);margin-top:12px;}
+.legend span{display:inline-flex;align-items:center;gap:6px;}
+
+/* Suivi */
+.row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.row .d{font-size:.85em;width:70px;color:var(--soft);}
+.bar{flex:1;height:16px;border-radius:8px;background:var(--fr-bg);overflow:hidden;}
+.bar>i{display:block;height:100%;background:var(--fr);}
+.row .v{font-size:.9em;width:56px;text-align:right;}
+.stat{display:flex;gap:10px;margin-bottom:16px;}
+.stat .b{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;}
+.stat .b .k{font-size:.78em;color:var(--soft);} .stat .b .val{font-size:1.4em;}
+
+/* QCM overlay */
+.overlay{position:fixed;inset:0;background:var(--paper);z-index:50;overflow-y:auto;display:none;}
+.overlay.on{display:block;}
+.qhead{position:sticky;top:0;background:var(--paper);padding:14px 16px 8px;}
+.qhead .top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.qclose{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 10px;color:var(--soft);}
+.prog{flex:1;height:10px;border-radius:6px;background:var(--card);border:1px solid var(--line);overflow:hidden;}
+.prog>i{display:block;height:100%;background:var(--fr);width:0;transition:width .3s;}
+.qcount{font-size:.82em;color:var(--soft);}
+.qbody{max-width:520px;margin:0 auto;padding:6px 16px 40px;}
+.qtag{display:inline-flex;align-items:center;gap:6px;font-size:.8em;padding:4px 10px;border-radius:10px;margin-bottom:12px;}
+.qtag.fr{background:var(--fr-bg);color:var(--fr-d);} .qtag.ma{background:var(--ma-bg);color:var(--ma-d);} .qtag.an{background:var(--an-bg);color:var(--an-d);}
+.qtext{font-size:1.2em;line-height:1.7;margin-bottom:18px;}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;font-size:1.05em;color:var(--ink);}
+.opt .oic{font-size:1.2em;opacity:0;}
+.opt.correct{border-color:var(--ok);background:var(--ok-bg);color:var(--ok-d);}
+.opt.correct .oic{opacity:1;color:var(--ok);}
+.opt.wrong{border-color:var(--no);background:var(--no-bg);color:var(--no-d);}
+.opt.wrong .oic{opacity:1;color:var(--no);}
+.opt:disabled{cursor:default;}
+.feedback{border-radius:14px;padding:14px 16px;margin:6px 0 16px;line-height:1.7;}
+.feedback.good{background:var(--ok-bg);border-left:5px solid var(--ok);}
+.feedback.bad{background:var(--no-bg);border-left:5px solid var(--no);}
+.feedback .enc{font-size:1.05em;margin-bottom:6px;}
+.feedback.good .enc{color:var(--ok-d);} .feedback.bad .enc{color:var(--no-d);}
+.feedback .expl{font-size:.95em;}
+
+/* Results */
+.result-score{text-align:center;padding:10px 0 6px;}
+.result-score .note{font-size:2.6em;color:var(--fr-d);}
+.result-score .pct{font-size:1em;color:var(--soft);}
+.miss{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:var(--card);}
+.miss .mq{font-size:.98em;margin-bottom:6px;}
+.miss .ma-line{font-size:.9em;color:var(--ok-d);}
+.miss .me-line{font-size:.9em;color:var(--no-d);margin-top:2px;}
+
+/* Fiche reader */
+.fiche-read{max-width:520px;margin:0 auto;padding:6px 16px 40px;}
+.fiche-h{font-size:1.4em;margin:6px 0 4px;}
+.fiche-sec{margin:14px 0;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--card);}
+.fiche-sec .st{font-size:1.05em;margin-bottom:8px;}
+.hl{padding:1px 6px;border-radius:6px;}
+.hl-fr{background:var(--fr-bg);color:var(--fr-d);} .hl-ma{background:var(--ma-bg);color:var(--ma-d);} .hl-an{background:var(--an-bg);color:var(--an-d);} .hl-ok{background:var(--ok-bg);color:var(--ok-d);}
+.ex{background:var(--paper);border-radius:10px;padding:8px 12px;margin:8px 0;font-size:.96em;}
+.readbox{display:flex;align-items:center;gap:12px;background:var(--ok-bg);border:2px solid var(--ok);border-radius:14px;padding:14px 16px;margin-top:20px;color:var(--ok-d);}
+.readbox.checked{background:var(--ok);color:#fff;}
+.readbox .box{width:26px;height:26px;border-radius:8px;border:2px solid var(--ok);display:flex;align-items:center;justify-content:center;flex:0 0 auto;background:#fff;color:var(--ok);}
+.readbox.checked .box{background:#fff;color:var(--ok);}
+
+/* Bottom nav */
+.nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:40;}
+.nav button{flex:1;background:none;border:none;color:var(--soft);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.72em;padding:4px;}
+.nav button .ic{width:1.5em;height:1.5em;}
+.nav button.on{color:var(--nav);}
+.section{display:none;} .section.on{display:block;}
+.emptynote{color:var(--soft);font-size:.92em;padding:6px 0;}
+
+.chip.hg{background:var(--hg-bg);color:var(--hg-d);} .chip.sc{background:var(--sc-bg);color:var(--sc-d);} .chip.em{background:var(--em-bg);color:var(--em-d);}
+.dot.hg{background:var(--hg);} .dot.sc{background:var(--sc);} .dot.em{background:var(--em);}
+.qtag.hg{background:var(--hg-bg);color:var(--hg-d);} .qtag.sc{background:var(--sc-bg);color:var(--sc-d);} .qtag.em{background:var(--em-bg);color:var(--em-d);}
+.hl-hg{background:var(--hg-bg);color:var(--hg-d);} .hl-sc{background:var(--sc-bg);color:var(--sc-d);} .hl-em{background:var(--em-bg);color:var(--em-d);}
+.fig{margin:12px 0;text-align:center;}
+.fig svg{max-width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;}
+.calc{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:4px 12px;margin:10px 0;}
+.calc .cl{padding:7px 0;border-bottom:1px dashed var(--line);line-height:1.6;}
+.calc .cl:last-child{border-bottom:none;}
+.calc .cw{color:var(--soft);font-size:.85em;display:block;margin-top:1px;}
+
+.dictee-texte{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;font-size:1.02em;}
+.dictee-texte-lire{background:var(--card);border:2px solid var(--hg);border-radius:12px;padding:6px 14px;margin:10px 0;font-size:1.3em;line-height:1.9;}
+.dphrase{padding:8px 0;border-bottom:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.dphrase:last-child{border-bottom:none;}
+.mini-listen{background:var(--hg-bg);color:var(--hg-d);border:1px solid var(--hg);border-radius:8px;padding:6px 12px;font-size:.85em;flex:0 0 auto;}
+.fautes-row{display:flex;align-items:center;justify-content:center;gap:22px;margin:12px 0 16px;}
+.fbtn{width:52px;height:52px;border-radius:50%;border:2px solid var(--fr);background:var(--card);color:var(--fr-d);font-size:1.6em;line-height:1;}
+.fnum{font-size:2.2em;min-width:56px;text-align:center;color:var(--ink);}
+</style>
+</head>
+<body>
+
+<!-- ============ MAIN ============ -->
+<div id="main">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="avatar" id="avatarIcon"></div>
+      <div>
+        <div class="hello">Salut <b>ACE</b> !</div>
+        <div class="date" id="todayStr"></div>
+      </div>
+      <div class="aa">
+        <button data-scale="1" class="on">A</button>
+        <button data-scale="1.18">A+</button>
+      </div>
+    </div>
+
+    <!-- ACCUEIL -->
+    <div class="section on" id="sec-accueil"></div>
+    <!-- TEST -->
+    <div class="section" id="sec-test"></div>
+    <!-- SUIVI -->
+    <div class="section" id="sec-suivi"></div>
+    <!-- FICHES -->
+    <div class="section" id="sec-fiches"></div>
+    <div class="section" id="sec-dictee"></div>
+  </div>
+</div>
+
+<!-- ============ QCM OVERLAY ============ -->
+<div class="overlay" id="qcm">
+  <div class="qhead">
+    <div class="top">
+      <button class="qclose" id="qClose">✕ Quitter</button>
+      <div class="prog"><i id="qProg"></i></div>
+      <div class="qcount" id="qCount"></div>
+    </div>
+  </div>
+  <div class="qbody" id="qBody"></div>
+</div>
+
+<!-- ============ FICHE OVERLAY ============ -->
+<div class="overlay" id="ficheView">
+  <div class="qhead">
+    <div class="top">
+      <button class="qclose" id="fClose">✕ Retour</button>
+      <div style="flex:1"></div>
+    </div>
+  </div>
+  <div class="fiche-read" id="fBody"></div>
+</div>
+
+<!-- ============ DICTÉE OVERLAY ============ -->
+<div class="overlay" id="dicteeView">
+  <div class="qhead"><div class="top"><button class="qclose" id="dClose">✕ Retour</button><div style="flex:1"></div></div></div>
+  <div class="fiche-read" id="dBody"></div>
+</div>
+
+<!-- ============ BOTTOM NAV ============ -->
+<nav class="nav">
+  <button data-tab="accueil" class="on">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+    Accueil
+  </button>
+  <button data-tab="test">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    Test
+  </button>
+  <button data-tab="suivi">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+    Suivi
+  </button>
+  <button data-tab="fiches">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11l5 5v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M14 4v6h6M8 14h8M8 18h6"/></svg>
+    Fiches
+  </button>
+  <button data-tab="dictee">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+    Dictée
+  </button>
+</nav>
+
+<script id="app">
+"use strict";
+
+/* ================= DONNÉES ================= */
+const BANQUE = [
+/* ================= MATHS (tables, calcul posé, fractions & décimaux) ================= */
+{id:"am01",matiere:"maths",niveau:"facile",important:true,q:"Combien font 7 × 8 ?",choix:["56","54","48","64"],bonne:0,expl:"7 × 8 = 56. Astuce : « 5, 6, 7, 8 » → 56 = 7 × 8."},
+{id:"am02",matiere:"maths",niveau:"facile",important:true,q:"Combien font 6 × 7 ?",choix:["42","36","48","40"],bonne:0,expl:"6 × 7 = 42."},
+{id:"am03",matiere:"maths",niveau:"facile",important:true,q:"Combien font 8 × 9 ?",choix:["72","64","81","74"],bonne:0,expl:"8 × 9 = 72."},
+{id:"am04",matiere:"maths",niveau:"facile",q:"Combien font 9 × 6 ?",choix:["54","56","45","63"],bonne:0,expl:"9 × 6 = 54."},
+{id:"am05",matiere:"maths",niveau:"facile",q:"Combien font 7 × 7 ?",choix:["49","42","56","47"],bonne:0,expl:"7 × 7 = 49."},
+{id:"am06",matiere:"maths",niveau:"facile",important:true,q:"Combien font 8 × 8 ?",choix:["64","56","72","68"],bonne:0,expl:"8 × 8 = 64."},
+{id:"am07",matiere:"maths",niveau:"facile",q:"Combien font 6 × 8 ?",choix:["48","42","54","46"],bonne:0,expl:"6 × 8 = 48."},
+{id:"am08",matiere:"maths",niveau:"facile",q:"Combien font 9 × 9 ?",choix:["81","72","91","89"],bonne:0,expl:"9 × 9 = 81."},
+{id:"am09",matiere:"maths",niveau:"facile",important:true,q:"Combien font 7 × 9 ?",choix:["63","72","56","64"],bonne:0,expl:"7 × 9 = 63."},
+{id:"am10",matiere:"maths",niveau:"facile",q:"Combien font 6 × 6 ?",choix:["36","30","42","32"],bonne:0,expl:"6 × 6 = 36."},
+{id:"am11",matiere:"maths",niveau:"facile",q:"Combien font 9 × 4 ?",choix:["36","32","45","40"],bonne:0,expl:"9 × 4 = 36."},
+{id:"am12",matiere:"maths",niveau:"facile",q:"Combien font 8 × 4 ?",choix:["32","28","36","24"],bonne:0,expl:"8 × 4 = 32."},
+{id:"am13",matiere:"maths",niveau:"facile",q:"Combien font 7 × 5 ?",choix:["35","30","40","45"],bonne:0,expl:"7 × 5 = 35 (multiplier par 5, ça finit par 0 ou 5)."},
+{id:"am14",matiere:"maths",niveau:"facile",q:"Combien font 9 × 3 ?",choix:["27","24","21","28"],bonne:0,expl:"9 × 3 = 27."},
+{id:"am15",matiere:"maths",niveau:"moyen",q:"Pose et calcule : 234 + 189",choix:["423","413","433","424"],bonne:0,expl:"4+9=13 (je pose 3, retiens 1) ; 3+8+1=12 (pose 2, retiens 1) ; 2+1+1=4. Résultat : 423."},
+{id:"am16",matiere:"maths",niveau:"moyen",q:"Pose et calcule : 405 − 168",choix:["237","247","337","227"],bonne:0,expl:"405 − 168 = 237. (405 − 168 : on peut vérifier 237 + 168 = 405.)"},
+{id:"am17",matiere:"maths",niveau:"moyen",q:"Pose et calcule : 47 × 6",choix:["282","272","242","288"],bonne:0,expl:"7×6=42 (pose 2, retiens 4) ; 4×6=24, +4 = 28. Résultat : 282."},
+{id:"am18",matiere:"maths",niveau:"moyen",q:"Pose et calcule : 123 × 4",choix:["492","482","412","496"],bonne:0,expl:"3×4=12 (pose 2, retiens 1) ; 2×4=8, +1 = 9 ; 1×4=4. Résultat : 492."},
+{id:"am19",matiere:"maths",niveau:"facile",q:"Combien font 56 × 10 ?",choix:["560","506","5600","56"],bonne:0,expl:"Multiplier par 10, on ajoute un zéro : 56 → 560."},
+{id:"am20",matiere:"maths",niveau:"facile",q:"Combien font 250 ÷ 5 ?",choix:["50","55","45","25"],bonne:0,expl:"250 ÷ 5 = 50 (car 5 × 50 = 250)."},
+{id:"am21",matiere:"maths",niveau:"moyen",q:"Combien font 84 ÷ 4 ?",choix:["21","24","22","18"],bonne:0,expl:"84 ÷ 4 = 21 (car 4 × 21 = 84)."},
+{id:"am22",matiere:"maths",niveau:"facile",q:"Combien font 1000 − 1 ?",choix:["999","990","909","99"],bonne:0,expl:"1000 − 1 = 999."},
+{id:"am23",matiere:"maths",niveau:"facile",q:"Combien font 100 − 37 ?",choix:["63","67","73","57"],bonne:0,expl:"100 − 37 = 63."},
+{id:"am24",matiere:"maths",niveau:"moyen",q:"Pose et calcule : 348 + 256",choix:["604","594","614","602"],bonne:0,expl:"8+6=14 (pose 4, retiens 1) ; 4+5+1=10 (pose 0, retiens 1) ; 3+2+1=6. Résultat : 604."},
+{id:"am25",matiere:"maths",niveau:"facile",q:"Combien font 63 ÷ 9 ?",choix:["7","8","6","9"],bonne:0,expl:"63 ÷ 9 = 7 (car 9 × 7 = 63)."},
+{id:"am26",matiere:"maths",niveau:"facile",q:"Combien font 72 ÷ 8 ?",choix:["9","8","7","6"],bonne:0,expl:"72 ÷ 8 = 9 (car 8 × 9 = 72)."},
+{id:"am27",matiere:"maths",niveau:"facile",q:"Combien font 45 + 38 ?",choix:["83","73","85","93"],bonne:0,expl:"45 + 38 = 83."},
+{id:"am28",matiere:"maths",niveau:"facile",q:"Combien font 90 − 24 ?",choix:["66","74","64","76"],bonne:0,expl:"90 − 24 = 66."},
+{id:"am29",matiere:"maths",niveau:"facile",q:"Combien font 25 × 4 ?",choix:["100","90","110","75"],bonne:0,expl:"25 × 4 = 100."},
+{id:"am30",matiere:"maths",niveau:"facile",q:"Combien font 13 × 3 ?",choix:["39","36","43","33"],bonne:0,expl:"13 × 3 = 39."},
+{id:"am31",matiere:"maths",niveau:"moyen",q:"Dans le nombre 3 528, quel est le chiffre des centaines ?",choix:["5","3","2","8"],bonne:0,expl:"Centaines = 3ᵉ chiffre en partant de la droite : 3(5)28 → 5."},
+{id:"am32",matiere:"maths",niveau:"facile",q:"Quel est le plus grand nombre ?",choix:["4 521","4 512","4 251","4 125"],bonne:0,expl:"On compare chiffre par chiffre à partir de la gauche : 4 521 est le plus grand."},
+{id:"am33",matiere:"maths",niveau:"moyen",q:"Comment s'écrit « trois mille deux cents » en chiffres ?",choix:["3 200","3 020","32 000","3 002"],bonne:0,expl:"Trois mille = 3 000, deux cents = 200 → 3 200."},
+{id:"am34",matiere:"maths",niveau:"facile",q:"Quel nombre est pair ?",choix:["8","3","5","9"],bonne:0,expl:"Un nombre pair se termine par 0, 2, 4, 6 ou 8. Ici, 8 est pair."},
+{id:"am35",matiere:"maths",niveau:"facile",q:"Quel est le double de 25 ?",choix:["50","55","45","35"],bonne:0,expl:"Le double, c'est × 2 : 25 × 2 = 50."},
+{id:"am36",matiere:"maths",niveau:"facile",q:"Quelle est la moitié de 50 ?",choix:["25","20","30","15"],bonne:0,expl:"La moitié, c'est ÷ 2 : 50 ÷ 2 = 25."},
+{id:"am37",matiere:"maths",niveau:"facile",q:"Combien y a-t-il de dizaines dans 100 ?",choix:["10","100","1","1000"],bonne:0,expl:"100 = 10 dizaines (10 × 10 = 100)."},
+{id:"am38",matiere:"maths",niveau:"moyen",q:"Arrondis 47 à la dizaine la plus proche.",choix:["50","40","45","47"],bonne:0,expl:"47 est entre 40 et 50, plus proche de 50. Arrondi : 50."},
+{id:"am39",matiere:"maths",niveau:"facile",important:true,q:"Combien font la moitié (1/2) de 10 ?",choix:["5","4","6","2"],bonne:0,expl:"1/2 de 10 = 10 ÷ 2 = 5."},
+{id:"am40",matiere:"maths",niveau:"facile",important:true,q:"Combien font le quart (1/4) de 20 ?",choix:["5","4","10","8"],bonne:0,expl:"1/4 de 20 = 20 ÷ 4 = 5."},
+{id:"am41",matiere:"maths",niveau:"moyen",important:true,q:"Combien font le tiers (1/3) de 9 ?",choix:["3","4","6","2"],bonne:0,expl:"1/3 de 9 = 9 ÷ 3 = 3."},
+{id:"am42",matiere:"maths",niveau:"facile",important:true,q:"Combien vaut 1/2 en nombre décimal ?",choix:["0,5","0,2","0,25","5"],bonne:0,expl:"Un demi = 0,5."},
+{id:"am43",matiere:"maths",niveau:"moyen",important:true,q:"Combien vaut 1/4 en nombre décimal ?",choix:["0,25","0,5","0,4","0,75"],bonne:0,expl:"Un quart = 0,25."},
+{id:"am44",matiere:"maths",niveau:"moyen",important:true,q:"Combien vaut 3/4 en nombre décimal ?",choix:["0,75","0,34","0,5","0,25"],bonne:0,expl:"Trois quarts = 0,75."},
+{id:"am45",matiere:"maths",niveau:"facile",important:true,q:"Combien font 0,5 + 0,5 ?",choix:["1","0,10","0,55","2"],bonne:0,expl:"0,5 + 0,5 = 1 (deux demis font un entier)."},
+{id:"am46",matiere:"maths",niveau:"moyen",q:"Combien font 2,5 + 1,5 ?",choix:["4","3,10","4,10","3"],bonne:0,expl:"2,5 + 1,5 = 4 (les 0,5 + 0,5 font 1, plus 2 + 1 = 3, donc 4)."},
+{id:"am47",matiere:"maths",niveau:"moyen",important:true,q:"Quel nombre est le plus grand : 0,7 ou 0,65 ?",choix:["0,7","0,65","ils sont égaux","impossible à dire"],bonne:0,expl:"0,7 = 0,70. Or 70 centièmes > 65 centièmes, donc 0,7 est plus grand."},
+{id:"am48",matiere:"maths",niveau:"moyen",q:"Combien vaut 3/10 en nombre décimal ?",choix:["0,3","0,03","3","0,13"],bonne:0,expl:"3 dixièmes = 0,3."},
+{id:"am49",matiere:"maths",niveau:"moyen",q:"Combien font 1,2 + 0,8 ?",choix:["2","1,10","2,10","1,28"],bonne:0,expl:"1,2 + 0,8 = 2 (0,2 + 0,8 = 1, plus 1 = 2)."},
+{id:"am50",matiere:"maths",niveau:"facile",q:"Quelle est la moitié de 5 ?",choix:["2,5","2","3","2,2"],bonne:0,expl:"5 ÷ 2 = 2,5."},
+{id:"am51",matiere:"maths",niveau:"moyen",q:"Combien font les 3/4 de 20 ?",choix:["15","12","16","10"],bonne:0,expl:"20 ÷ 4 = 5 (un quart), puis × 3 = 15."},
+{id:"am52",matiere:"maths",niveau:"facile",q:"Combien vaut 1/10 en nombre décimal ?",choix:["0,1","0,01","1","0,10"],bonne:0,expl:"Un dixième = 0,1."},
+{id:"am53",matiere:"maths",niveau:"difficile",q:"Dans le nombre 12,05, le chiffre 5 est à la place des…",choix:["centièmes","dixièmes","unités","dizaines"],bonne:0,expl:"Après la virgule : 1ᵉʳ chiffre = dixièmes (0), 2ᵉ = centièmes (5). Donc 5 est aux centièmes."},
+{id:"am54",matiere:"maths",niveau:"moyen",q:"Combien font 0,25 + 0,25 ?",choix:["0,5","0,50","0,4","0,20"],bonne:0,expl:"0,25 + 0,25 = 0,50 = 0,5 (deux quarts font un demi)."},
+{id:"am55",matiere:"maths",niveau:"moyen",q:"Quel nombre est le plus grand : 1,5 ou 1,45 ?",choix:["1,5","1,45","ils sont égaux","1,455"],bonne:0,expl:"1,5 = 1,50. Or 50 centièmes > 45 centièmes, donc 1,5 est plus grand."},
+{id:"am56",matiere:"maths",niveau:"facile",q:"Quel est le périmètre d'un carré de côté 5 cm ?",choix:["20 cm","25 cm","10 cm","15 cm"],bonne:0,expl:"Périmètre = 4 côtés : 5 × 4 = 20 cm."},
+{id:"am57",matiere:"maths",niveau:"moyen",q:"Quelle est l'aire d'un rectangle de 4 cm sur 3 cm ?",choix:["12 cm²","14 cm²","7 cm²","24 cm²"],bonne:0,expl:"Aire = longueur × largeur = 4 × 3 = 12 cm²."},
+{id:"am58",matiere:"maths",niveau:"facile",q:"Combien mesure un angle droit ?",choix:["90°","180°","45°","100°"],bonne:0,expl:"Un angle droit (le coin d'une feuille) mesure 90°."},
+{id:"am59",matiere:"maths",niveau:"facile",q:"1 mètre, c'est combien de centimètres ?",choix:["100 cm","10 cm","1000 cm","50 cm"],bonne:0,expl:"1 m = 100 cm."},
+{id:"am60",matiere:"maths",niveau:"facile",q:"1 kilogramme, c'est combien de grammes ?",choix:["1000 g","100 g","10 g","500 g"],bonne:0,expl:"1 kg = 1000 g."},
+{id:"am61",matiere:"maths",niveau:"facile",q:"1 heure, c'est combien de minutes ?",choix:["60 min","100 min","30 min","24 min"],bonne:0,expl:"1 heure = 60 minutes."},
+{id:"am62",matiere:"maths",niveau:"facile",q:"2 mètres, c'est combien de centimètres ?",choix:["200 cm","20 cm","2000 cm","250 cm"],bonne:0,expl:"1 m = 100 cm, donc 2 m = 200 cm."},
+{id:"am63",matiere:"maths",niveau:"moyen",q:"500 g, c'est combien de kilogrammes ?",choix:["0,5 kg","5 kg","50 kg","0,05 kg"],bonne:0,expl:"1000 g = 1 kg, donc 500 g = 0,5 kg (un demi-kilo)."},
+{id:"am64",matiere:"maths",niveau:"facile",q:"Une demi-heure, c'est combien de minutes ?",choix:["30 min","15 min","60 min","20 min"],bonne:0,expl:"Une demi-heure = 60 ÷ 2 = 30 minutes."},
+{id:"am65",matiere:"maths",niveau:"moyen",q:"Périmètre d'un rectangle de longueur 5 cm et largeur 3 cm ?",choix:["16 cm","15 cm","8 cm","13 cm"],bonne:0,expl:"On additionne les 4 côtés : 5 + 3 + 5 + 3 = 16 cm."},
+{id:"am66",matiere:"maths",niveau:"difficile",q:"4 paquets contiennent chacun 6 gâteaux. Combien de gâteaux en tout ?",choix:["24","20","10","18"],bonne:0,expl:"4 × 6 = 24 gâteaux."},
+{id:"am67",matiere:"maths",niveau:"moyen",q:"3 stylos coûtent 2 € chacun. Prix total ?",choix:["6 €","5 €","8 €","3 €"],bonne:0,expl:"3 × 2 € = 6 €."},
+{id:"am68",matiere:"maths",niveau:"difficile",q:"Ace a 12 billes, il en gagne 8 puis en perd 5. Combien lui en reste-t-il ?",choix:["15","25","20","9"],bonne:0,expl:"12 + 8 = 20, puis 20 − 5 = 15 billes."},
+{id:"am69",matiere:"maths",niveau:"difficile",q:"Une baguette coûte 0,90 €. Ace paie avec 2 €. Combien lui rend-on ?",choix:["1,10 €","1,20 €","0,90 €","1 €"],bonne:0,expl:"2 € − 0,90 € = 1,10 €."},
+{id:"am70",matiere:"maths",niveau:"difficile",q:"24 élèves sont répartis en groupes de 4. Combien de groupes ?",choix:["6","8","4","12"],bonne:0,expl:"24 ÷ 4 = 6 groupes."},
+{id:"am71",matiere:"maths",niveau:"difficile",q:"Un match dure 90 min et commence à 14h00. À quelle heure finit-il ?",choix:["15h30","15h00","16h00","14h90"],bonne:0,expl:"90 min = 1h30. 14h00 + 1h30 = 15h30."},
+{id:"am72",matiere:"maths",niveau:"difficile",q:"Un ruban mesure 1 m. On coupe 35 cm. Quelle longueur reste-t-il ?",choix:["65 cm","75 cm","55 cm","35 cm"],bonne:0,expl:"1 m = 100 cm. 100 − 35 = 65 cm."},
+{id:"am73",matiere:"maths",niveau:"difficile",q:"5 boîtes contiennent chacune 12 œufs. Combien d'œufs en tout ?",choix:["60","55","50","72"],bonne:0,expl:"5 × 12 = 60 œufs."},
+{id:"am74",matiere:"maths",niveau:"difficile",q:"Un jus coûte 1,20 €. Ace en achète 2. Combien paie-t-il ?",choix:["2,40 €","2,20 €","1,40 €","3,20 €"],bonne:0,expl:"2 × 1,20 € = 2,40 €."},
+{id:"am75",matiere:"maths",niveau:"moyen",q:"Ace a 25 images, il en colle 18. Combien lui en reste-t-il ?",choix:["7","8","6","17"],bonne:0,expl:"25 − 18 = 7 images."},
+{id:"am76",matiere:"maths",niveau:"difficile",q:"Un livre a 96 pages. Ace lit 40 pages, puis 25. Combien reste-t-il à lire ?",choix:["31","35","21","41"],bonne:0,expl:"40 + 25 = 65 pages lues. 96 − 65 = 31 pages restantes."},
+{id:"am77",matiere:"maths",niveau:"moyen",q:"Une classe compte 27 élèves, 3 sont absents. Combien de présents ?",choix:["24","23","25","30"],bonne:0,expl:"27 − 3 = 24 élèves présents."},
+{id:"am78",matiere:"maths",niveau:"facile",q:"Sur un terrain, il y a 2 équipes de 11 joueurs. Combien de joueurs en tout ?",choix:["22","21","20","24"],bonne:0,expl:"2 × 11 = 22 joueurs."},
+
+/* ================= FRANÇAIS ================= */
+{id:"af01",matiere:"francais",niveau:"facile",q:"« Il ___ faim. » « a » ou « à » ?",choix:["a","à","as","ah"],bonne:0,expl:"On peut dire « il AVAIT faim » : verbe avoir → « a » sans accent."},
+{id:"af02",matiere:"francais",niveau:"facile",q:"« Je vais ___ l'école. » « a » ou « à » ?",choix:["à","a","as","ah"],bonne:0,expl:"C'est une direction, on met « à » avec accent."},
+{id:"af03",matiere:"francais",niveau:"facile",q:"« Il ___ content. » « et » ou « est » ?",choix:["est","et","es","ait"],bonne:0,expl:"On peut dire « il ÉTAIT content » : verbe être → « est »."},
+{id:"af04",matiere:"francais",niveau:"facile",q:"« Un chien ___ un chat. » « et » ou « est » ?",choix:["et","est","ai","ait"],bonne:0,expl:"On relie deux mots (= « puis ») : c'est « et »."},
+{id:"af05",matiere:"francais",niveau:"facile",q:"« Ils ___ gagné. » « on » ou « ont » ?",choix:["ont","on","ond","hont"],bonne:0,expl:"On peut dire « ils AVAIENT gagné » : verbe avoir → « ont »."},
+{id:"af06",matiere:"francais",niveau:"facile",q:"« ___ joue au foot. » « On » ou « Ont » ?",choix:["On","Ont","Ond","Hon"],bonne:0,expl:"« On » = « il / nous ». On peut dire « IL joue » → « On »."},
+{id:"af07",matiere:"francais",niveau:"facile",q:"« Ils ___ dans le jardin. » « son » ou « sont » ?",choix:["sont","son","sons","cont"],bonne:0,expl:"On peut dire « ils ÉTAIENT » : verbe être → « sont »."},
+{id:"af08",matiere:"francais",niveau:"facile",q:"« ___ ballon est neuf. » « Son » ou « Sont » ?",choix:["Son","Sont","Sson","Ont"],bonne:0,expl:"« Son » montre la possession. On peut dire « MON ballon »."},
+{id:"af09",matiere:"francais",niveau:"facile",q:"« ___ es-tu ? » « Ou » ou « Où » ?",choix:["Où","Ou","Oud","Houx"],bonne:0,expl:"On parle d'un lieu → « Où » avec accent."},
+{id:"af10",matiere:"francais",niveau:"facile",q:"« Tu veux du thé ___ du café ? » « ou » ou « où » ?",choix:["ou","où","oud","hou"],bonne:0,expl:"C'est un choix (= ou bien) → « ou » sans accent."},
+{id:"af11",matiere:"francais",niveau:"facile",q:"« Il aime ___ parents. » (les siens) « ses » ou « ces » ?",choix:["ses","ces","c'est","sais"],bonne:0,expl:"« ses » = les siens. On peut dire « MES parents »."},
+{id:"af12",matiere:"francais",niveau:"facile",q:"« Regarde ___ nuages. » (là-haut) « ces » ou « ses » ?",choix:["ces","ses","c'est","sais"],bonne:0,expl:"« ces » sert à montrer. On peut dire « CE nuage / CES nuages »."},
+{id:"af13",matiere:"francais",niveau:"moyen",q:"« J'aime le foot, ___ pas le tennis. » « mes » ou « mais » ?",choix:["mais","mes","met","m'est"],bonne:0,expl:"« mais » exprime l'opposition (= pourtant). « mes » = plusieurs à moi."},
+{id:"af14",matiere:"francais",niveau:"moyen",q:"« Où sont ___ chaussures ? » « mes » ou « mais » ?",choix:["mes","mais","mets","m'est"],bonne:0,expl:"« mes » = plusieurs choses à moi (mes chaussures)."},
+{id:"af15",matiere:"francais",niveau:"moyen",q:"« Elle est ___. » (ici, à cet endroit) « la » ou « là » ?",choix:["là","la","l'a","las"],bonne:0,expl:"« là » (avec accent) indique le lieu. « la » est un petit mot devant un nom (la balle)."},
+{id:"af16",matiere:"francais",niveau:"facile",q:"Conjugue « chanter » avec « je » (présent).",choix:["je chante","je chantes","je chantent","je chanter"],bonne:0,expl:"Verbe en -er avec « je » → -e : « je chante »."},
+{id:"af17",matiere:"francais",niveau:"facile",q:"Conjugue « finir » avec « nous » (présent).",choix:["nous finissons","nous finisons","nous finons","nous finissont"],bonne:0,expl:"« nous finissons » (double s, -ons)."},
+{id:"af18",matiere:"francais",niveau:"facile",q:"Conjugue « être » avec « ils » (présent).",choix:["ils sont","ils sonts","ils est","ils ont"],bonne:0,expl:"« ils sont » (verbe être au présent)."},
+{id:"af19",matiere:"francais",niveau:"facile",q:"Conjugue « avoir » avec « je » (présent).",choix:["j'ai","j'ais","j'has","je ai"],bonne:0,expl:"« j'ai » (verbe avoir au présent)."},
+{id:"af20",matiere:"francais",niveau:"facile",q:"Conjugue « aller » avec « tu » (présent).",choix:["tu vas","tu va","tu vais","tu allais"],bonne:0,expl:"« tu vas » (avec un s, comme souvent avec « tu »)."},
+{id:"af21",matiere:"francais",niveau:"moyen",q:"Conjugue « faire » avec « nous » (présent).",choix:["nous faisons","nous faisions","nous fesons","nous faites"],bonne:0,expl:"« nous faisons » (attention, on écrit ai même si on entend « e »)."},
+{id:"af22",matiere:"francais",niveau:"moyen",q:"Conjugue « venir » avec « il » (présent).",choix:["il vient","il viens","il vent","il venir"],bonne:0,expl:"« il vient » (avec un t à la 3ᵉ personne)."},
+{id:"af23",matiere:"francais",niveau:"moyen",q:"Imparfait de « être » avec « il » :",choix:["il était","il est","il sera","il a été"],bonne:0,expl:"À l'imparfait : « il était »."},
+{id:"af24",matiere:"francais",niveau:"moyen",q:"Futur simple de « avoir » avec « je » :",choix:["j'aurai","j'avais","j'ai","j'aurais"],bonne:0,expl:"Au futur : « j'aurai » (une seule chose à venir, terminaison -ai)."},
+{id:"af25",matiere:"francais",niveau:"moyen",q:"Passé composé de « manger » avec « je » :",choix:["j'ai mangé","je mange","j'ai manger","je mangé"],bonne:0,expl:"avoir au présent + participe passé : « j'ai mangé »."},
+{id:"af26",matiere:"francais",niveau:"moyen",q:"Conjugue « prendre » avec « je » (présent).",choix:["je prends","je prend","je prens","je prendre"],bonne:0,expl:"« je prends » (avec ds à la fin)."},
+{id:"af27",matiere:"francais",niveau:"moyen",q:"Conjugue « dire » avec « vous » (présent).",choix:["vous dites","vous disez","vous dictes","vous disiez"],bonne:0,expl:"« vous dites » (forme irrégulière à retenir)."},
+{id:"af28",matiere:"francais",niveau:"facile",q:"Quel est le pluriel de « cheval » ?",choix:["chevaux","chevals","chevaus","cheveaux"],bonne:0,expl:"Les mots en -al font souvent -aux : cheval → chevaux."},
+{id:"af29",matiere:"francais",niveau:"facile",q:"Quel est le pluriel de « chou » ?",choix:["choux","chous","choues","chou"],bonne:0,expl:"Exception : chou prend un x → choux (comme bijou, caillou, genou…)."},
+{id:"af30",matiere:"francais",niveau:"facile",q:"Quel est le pluriel de « tableau » ?",choix:["tableaux","tableaus","tableauxs","tableau"],bonne:0,expl:"Les mots en -eau prennent un x : tableau → tableaux."},
+{id:"af31",matiere:"francais",niveau:"moyen",q:"Quel est le pluriel de « souris » ?",choix:["souris","souri","souries","sourix"],bonne:0,expl:"Les mots finissant déjà par s ne changent pas : une souris, des souris."},
+{id:"af32",matiere:"francais",niveau:"moyen",q:"Quel est le féminin de « un acteur » ?",choix:["une actrice","une acteuse","une acteure","une actrisse"],bonne:0,expl:"acteur → actrice."},
+{id:"af33",matiere:"francais",niveau:"moyen",q:"« Les fleurs sont ___. » (beau)",choix:["belles","beaux","belle","beau"],bonne:0,expl:"« fleurs » est féminin pluriel → « belles »."},
+{id:"af34",matiere:"francais",niveau:"moyen",q:"« Les joueurs ___ sur le terrain. » (courir, présent)",choix:["courent","cours","court","courons"],bonne:0,expl:"Sujet pluriel (ils) → « courent »."},
+{id:"af35",matiere:"francais",niveau:"facile",q:"« vite » est…",choix:["un adverbe","un nom","un verbe","un adjectif"],bonne:0,expl:"« vite » dit COMMENT on fait : c'est un adverbe."},
+{id:"af36",matiere:"francais",niveau:"facile",q:"« rouge » est…",choix:["un adjectif","un nom","un adverbe","un verbe"],bonne:0,expl:"« rouge » décrit un nom (un maillot rouge) : c'est un adjectif."},
+{id:"af37",matiere:"francais",niveau:"facile",q:"« maison » est…",choix:["un nom","un verbe","un adjectif","un adverbe"],bonne:0,expl:"« maison » désigne une chose : c'est un nom."},
+{id:"af38",matiere:"francais",niveau:"facile",q:"« courir » est…",choix:["un verbe","un nom","un adjectif","un adverbe"],bonne:0,expl:"« courir » est une action : c'est un verbe (à l'infinitif)."},
+{id:"af39",matiere:"francais",niveau:"facile",q:"Dans « le ballon », le mot « le » est…",choix:["un déterminant","un nom","un verbe","un adverbe"],bonne:0,expl:"« le, la, un, des »… se mettent devant un nom : ce sont des déterminants."},
+{id:"af40",matiere:"francais",niveau:"moyen",q:"Dans « il marque un but », le mot « il » est…",choix:["un pronom","un nom","un verbe","un adjectif"],bonne:0,expl:"« il » remplace un nom : c'est un pronom (personnel)."},
+{id:"af41",matiere:"francais",niveau:"facile",q:"« Quelle belle action ! » est une phrase…",choix:["exclamative","interrogative","impérative","déclarative"],bonne:0,expl:"Elle exprime un sentiment et finit par « ! » : phrase exclamative."},
+{id:"af42",matiere:"francais",niveau:"facile",q:"« Tu viens jouer ? » est une phrase…",choix:["interrogative","exclamative","impérative","déclarative"],bonne:0,expl:"Elle pose une question et finit par « ? » : phrase interrogative."},
+{id:"af43",matiere:"francais",niveau:"facile",q:"Quel signe met-on à la fin d'une question ?",choix:["?","!",".",","],bonne:0,expl:"Une question se termine par un point d'interrogation « ? »."},
+{id:"af44",matiere:"francais",niveau:"facile",q:"Dans « Le chat dort », le sujet est…",choix:["le chat","dort","le","chat dort"],bonne:0,expl:"Le sujet fait l'action : QUI dort ? Le chat."},
+{id:"af45",matiere:"francais",niveau:"facile",q:"Ce mot est-il bien orthographié : « beaucoup » ?",choix:["Oui","Non"],bonne:0,expl:"Oui : « beaucoup » (avec eau et un p à la fin)."},
+{id:"af46",matiere:"francais",niveau:"facile",q:"Ce mot est-il bien orthographié : « toujours » ?",choix:["Oui","Non"],bonne:0,expl:"Oui : « toujours » prend un s à la fin."},
+{id:"af47",matiere:"francais",niveau:"facile",q:"Ce mot est-il bien orthographié : « beacoup » ?",choix:["Oui","Non"],bonne:1,expl:"Non : il manque une lettre. On écrit « beaucoup »."},
+{id:"af48",matiere:"francais",niveau:"facile",q:"Ce mot est-il bien orthographié : « toujour » ?",choix:["Oui","Non"],bonne:1,expl:"Non : il faut un s à la fin → « toujours »."},
+{id:"af49",matiere:"francais",niveau:"facile",q:"Ce mot est-il bien orthographié : « femme » ?",choix:["Oui","Non"],bonne:0,expl:"Oui : « femme » (on l'écrit avec e-m-m même si on entend « fam »)."},
+{id:"af50",matiere:"francais",niveau:"facile",q:"Ce mot est-il bien orthographié : « aujourd'hui » ?",choix:["Oui","Non"],bonne:0,expl:"Oui, avec l'apostrophe : aujourd'hui."},
+{id:"af51",matiere:"francais",niveau:"facile",q:"Ce mot est-il bien orthographié : « maison » ?",choix:["Oui","Non"],bonne:0,expl:"Oui : « maison » (m-a-i-s-o-n)."},
+{id:"af52",matiere:"francais",niveau:"facile",q:"Ce mot est-il bien orthographié : « maisson » ?",choix:["Oui","Non"],bonne:1,expl:"Non : un seul s → « maison »."},
+{id:"af53",matiere:"francais",niveau:"moyen",q:"Ce mot est-il bien orthographié : « apeler » ?",choix:["Oui","Non"],bonne:1,expl:"Non : « appeler » prend deux p."},
+{id:"af54",matiere:"francais",niveau:"moyen",q:"« parce que » (en deux mots) est-il correct ?",choix:["Oui","Non"],bonne:0,expl:"Oui : « parce que » s'écrit en deux mots."},
+{id:"af55",matiere:"francais",niveau:"moyen",q:"Ce mot est-il bien orthographié : « monsieur » ?",choix:["Oui","Non"],bonne:0,expl:"Oui : « monsieur » (on l'écrit ainsi même si on entend « meussieu »)."},
+{id:"af56",matiere:"francais",niveau:"facile",q:"Quel est un synonyme de « content » ?",choix:["heureux","triste","fâché","fatigué"],bonne:0,expl:"« content » et « heureux » veulent dire à peu près la même chose."},
+{id:"af57",matiere:"francais",niveau:"facile",q:"Quel est le contraire de « grand » ?",choix:["petit","gros","long","haut"],bonne:0,expl:"Le contraire de grand, c'est petit."},
+{id:"af58",matiere:"francais",niveau:"moyen",q:"Dans l'ordre alphabétique, quel mot vient en premier ?",choix:["abricot","banane","cerise","datte"],bonne:0,expl:"On classe par la 1ʳᵉ lettre : a vient avant b, c, d. Donc « abricot »."},
+
+/* ================= ANGLAIS ================= */
+{id:"ae01",matiere:"anglais",niveau:"facile",q:"« I ___ Ace. »",choix:["am","is","are","be"],bonne:0,expl:"Avec « I », on utilise « am » : I am Ace."},
+{id:"ae02",matiere:"anglais",niveau:"facile",q:"« She ___ happy. »",choix:["is","am","are","be"],bonne:0,expl:"Avec he / she / it → « is » : She is happy."},
+{id:"ae03",matiere:"anglais",niveau:"facile",q:"« They ___ friends. »",choix:["are","is","am","be"],bonne:0,expl:"Avec we / you / they → « are » : They are friends."},
+{id:"ae04",matiere:"anglais",niveau:"facile",q:"« Hello, ___ are you ? » (comment ça va)",choix:["how","what","who","where"],bonne:0,expl:"« How are you ? » = Comment vas-tu ?"},
+{id:"ae05",matiere:"anglais",niveau:"facile",q:"« What ___ your name ? »",choix:["is","are","am","be"],bonne:0,expl:"« What is your name ? » = Quel est ton nom ?"},
+{id:"ae06",matiere:"anglais",niveau:"facile",q:"« ___ apple » « a » ou « an » ?",choix:["an","a","the","one"],bonne:0,expl:"Devant un son voyelle (a, e, i, o, u) → « an » : an apple."},
+{id:"ae07",matiere:"anglais",niveau:"facile",q:"Comment dit-on « chien » en anglais ?",choix:["dog","cat","fish","bird"],bonne:0,expl:"chien = dog."},
+{id:"ae08",matiere:"anglais",niveau:"facile",q:"Comment dit-on « chat » en anglais ?",choix:["cat","dog","cow","car"],bonne:0,expl:"chat = cat."},
+{id:"ae09",matiere:"anglais",niveau:"facile",q:"Comment dit-on « école » en anglais ?",choix:["school","street","house","shop"],bonne:0,expl:"école = school."},
+{id:"ae10",matiere:"anglais",niveau:"facile",q:"Comment dit-on « rouge » en anglais ?",choix:["red","blue","green","black"],bonne:0,expl:"rouge = red."},
+{id:"ae11",matiere:"anglais",niveau:"facile",q:"Comment dit-on « bleu » en anglais ?",choix:["blue","red","yellow","white"],bonne:0,expl:"bleu = blue."},
+{id:"ae12",matiere:"anglais",niveau:"facile",q:"Quel est le pluriel de « cat » ?",choix:["cats","cates","caties","cat"],bonne:0,expl:"On ajoute -s : cat → cats."},
+{id:"ae13",matiere:"anglais",niveau:"moyen",q:"« Monday, Tuesday, ___ »",choix:["Wednesday","Sunday","Friday","Thursday"],bonne:0,expl:"L'ordre des jours : Monday, Tuesday, Wednesday…"},
+{id:"ae14",matiere:"anglais",niveau:"facile",q:"« three » correspond à quel nombre ?",choix:["3","2","4","5"],bonne:0,expl:"three = 3."},
+{id:"ae15",matiere:"anglais",niveau:"moyen",q:"« I ___ ten years old. » (j'ai 10 ans)",choix:["am","have","is","are"],bonne:0,expl:"En anglais, on dit « I AM ten years old » (je SUIS âgé de 10 ans)."},
+{id:"ae16",matiere:"anglais",niveau:"facile",q:"Comment dit-on « je » en anglais ?",choix:["I","you","he","me"],bonne:0,expl:"je = I (toujours avec une majuscule)."},
+{id:"ae17",matiere:"anglais",niveau:"facile",q:"Comment dit-on « il » en anglais ?",choix:["he","she","it","him"],bonne:0,expl:"il = he."},
+{id:"ae18",matiere:"anglais",niveau:"moyen",q:"« ___ is a dog. » (c'est un chien)",choix:["It","He","She","They"],bonne:0,expl:"Pour un animal ou une chose, on utilise « It » : It is a dog."},
+{id:"ae19",matiere:"anglais",niveau:"facile",q:"« green » est quelle couleur ?",choix:["vert","rouge","bleu","jaune"],bonne:0,expl:"green = vert."},
+{id:"ae20",matiere:"anglais",niveau:"facile",q:"« goodbye » veut dire…",choix:["au revoir","bonjour","merci","pardon"],bonne:0,expl:"goodbye = au revoir."},
+{id:"ae21",matiere:"anglais",niveau:"facile",q:"« a book » veut dire…",choix:["un livre","un stylo","une porte","une table"],bonne:0,expl:"a book = un livre."},
+{id:"ae22",matiere:"anglais",niveau:"moyen",q:"« seven » correspond à quel nombre ?",choix:["7","6","8","9"],bonne:0,expl:"seven = 7."},
+{id:"ae23",matiere:"anglais",niveau:"facile",q:"Quel est le contraire de « yes » ?",choix:["no","not","never","none"],bonne:0,expl:"Le contraire de yes (oui) est no (non)."},
+{id:"ae24",matiere:"anglais",niveau:"moyen",q:"« How ___ are you ? » (pour demander l'âge)",choix:["old","much","many","long"],bonne:0,expl:"« How old are you ? » = Quel âge as-tu ?"},
+/* ===== MATHS : DIVISIONS ===== */
+{id:"md01",matiere:"maths",niveau:"facile",q:"Combien font 12 ÷ 3 ?",choix:["4","3","6","9"],bonne:0,expl:"12 ÷ 3 = 4 (car 3 × 4 = 12)."},
+{id:"md02",matiere:"maths",niveau:"facile",q:"Combien font 20 ÷ 4 ?",choix:["5","4","6","10"],bonne:0,expl:"20 ÷ 4 = 5 (car 4 × 5 = 20)."},
+{id:"md03",matiere:"maths",niveau:"facile",q:"Combien font 15 ÷ 5 ?",choix:["3","5","2","4"],bonne:0,expl:"15 ÷ 5 = 3."},
+{id:"md04",matiere:"maths",niveau:"facile",q:"Combien font 18 ÷ 2 ?",choix:["9","8","6","10"],bonne:0,expl:"18 ÷ 2 = 9 (la moitié de 18)."},
+{id:"md05",matiere:"maths",niveau:"facile",q:"Combien font 24 ÷ 6 ?",choix:["4","6","3","8"],bonne:0,expl:"24 ÷ 6 = 4 (car 6 × 4 = 24)."},
+{id:"md06",matiere:"maths",niveau:"facile",important:true,q:"Combien font 56 ÷ 7 ?",choix:["8","7","9","6"],bonne:0,expl:"56 ÷ 7 = 8 (car 7 × 8 = 56)."},
+{id:"md07",matiere:"maths",niveau:"facile",q:"Combien font 40 ÷ 8 ?",choix:["5","6","4","8"],bonne:0,expl:"40 ÷ 8 = 5 (car 8 × 5 = 40)."},
+{id:"md08",matiere:"maths",niveau:"facile",q:"Combien font 63 ÷ 9 ?",choix:["7","8","6","9"],bonne:0,expl:"63 ÷ 9 = 7 (car 9 × 7 = 63)."},
+{id:"md09",matiere:"maths",niveau:"moyen",q:"Combien font 48 ÷ 4 ?",choix:["12","14","11","8"],bonne:0,expl:"48 ÷ 4 = 12."},
+{id:"md10",matiere:"maths",niveau:"moyen",important:true,q:"Combien font 96 ÷ 4 ?",choix:["24","22","26","28"],bonne:0,expl:"96 ÷ 4 = 24 (9 ÷ 4 → 2 reste 1 ; 16 ÷ 4 → 4)."},
+{id:"md11",matiere:"maths",niveau:"moyen",q:"Combien font 84 ÷ 6 ?",choix:["14","12","16","13"],bonne:0,expl:"84 ÷ 6 = 14 (car 6 × 14 = 84)."},
+{id:"md12",matiere:"maths",niveau:"moyen",q:"Combien font 72 ÷ 3 ?",choix:["24","21","23","26"],bonne:0,expl:"72 ÷ 3 = 24."},
+{id:"md13",matiere:"maths",niveau:"moyen",important:true,q:"Quel est le reste de 74 ÷ 5 ?",choix:["4","3","2","0"],bonne:0,expl:"74 = 5 × 14 + 4. Le reste est 4 (toujours plus petit que 5)."},
+{id:"md14",matiere:"maths",niveau:"moyen",q:"Quel est le quotient de 74 ÷ 5 ?",choix:["14","15","13","12"],bonne:0,expl:"74 = 5 × 14 + 4. Le quotient est 14."},
+{id:"md15",matiere:"maths",niveau:"moyen",q:"Pour 26 ÷ 4, quel est le résultat ?",choix:["6 reste 2","5 reste 6","6 reste 4","7 reste 0"],bonne:0,expl:"4 × 6 = 24, et 26 − 24 = 2. Donc 6 reste 2."},
+{id:"md16",matiere:"maths",niveau:"facile",q:"Combien font 320 ÷ 10 ?",choix:["32","320","30","3,2"],bonne:0,expl:"Diviser par 10 : on enlève un zéro → 32."},
+{id:"md17",matiere:"maths",niveau:"difficile",q:"Combien font 320 ÷ 100 ?",choix:["3,2","32","0,32","3"],bonne:0,expl:"Diviser par 100 : la virgule recule de 2 rangs → 3,2."},
+{id:"md18",matiere:"maths",niveau:"difficile",q:"Combien font 348 ÷ 4 ?",choix:["87","82","84","74"],bonne:0,expl:"348 ÷ 4 = 87 (car 4 × 87 = 348)."},
+{id:"md19",matiere:"maths",niveau:"difficile",q:"Combien de boîtes de 6 œufs peut-on remplir avec 54 œufs ?",choix:["9","8","10","7"],bonne:0,expl:"54 ÷ 6 = 9 boîtes."},
+{id:"md20",matiere:"maths",niveau:"facile",q:"Combien font 45 ÷ 5 ?",choix:["9","8","7","6"],bonne:0,expl:"45 ÷ 5 = 9."},
+{id:"md21",matiere:"maths",niveau:"moyen",q:"On partage 30 bonbons entre 5 enfants. Chacun en a…",choix:["6","5","7","4"],bonne:0,expl:"30 ÷ 5 = 6 bonbons chacun."},
+
+/* ===== HISTOIRE-GÉO ===== */
+{id:"hq01",matiere:"histoire",niveau:"facile",q:"La période avant l'invention de l'écriture s'appelle…",choix:["la Préhistoire","le Moyen Âge","l'Antiquité","aujourd'hui"],bonne:0,expl:"Avant l'écriture, c'est la Préhistoire."},
+{id:"hq02",matiere:"histoire",niveau:"facile",q:"Les habitants de la Gaule étaient les…",choix:["Gaulois","Égyptiens","Vikings","Grecs"],bonne:0,expl:"En Gaule vivaient les Gaulois."},
+{id:"hq03",matiere:"histoire",niveau:"moyen",q:"Les Romains parlaient…",choix:["latin","anglais","gaulois","arabe"],bonne:0,expl:"Le latin, ancêtre du français."},
+{id:"hq04",matiere:"histoire",niveau:"facile",q:"Au Moyen Âge, les seigneurs vivaient dans des…",choix:["châteaux forts","gratte-ciels","cavernes","usines"],bonne:0,expl:"Des châteaux forts, pour se protéger."},
+{id:"hq05",matiere:"histoire",niveau:"moyen",q:"Le guerrier à cheval du Moyen Âge est le…",choix:["chevalier","pharaon","gladiateur","pirate"],bonne:0,expl:"C'est le chevalier."},
+{id:"hq06",matiere:"histoire",niveau:"facile",q:"Combien y a-t-il de continents ?",choix:["6","3","10","5"],bonne:0,expl:"On compte 6 continents."},
+{id:"hq07",matiere:"histoire",niveau:"moyen",q:"Le plus grand océan est l'…",choix:["océan Pacifique","océan Arctique","océan Indien","mer Méditerranée"],bonne:0,expl:"Le Pacifique est le plus grand."},
+{id:"hq08",matiere:"histoire",niveau:"facile",important:true,q:"La capitale de la France est…",choix:["Paris","Lyon","Marseille","Bordeaux"],bonne:0,expl:"La capitale est Paris."},
+{id:"hq09",matiere:"histoire",niveau:"moyen",q:"Quel fleuve traverse Paris ?",choix:["la Seine","la Loire","le Rhône","la Garonne"],bonne:0,expl:"La Seine traverse Paris."},
+{id:"hq10",matiere:"histoire",niveau:"facile",q:"La France a la forme d'un…",choix:["hexagone","cercle","carré","triangle"],bonne:0,expl:"On l'appelle l'Hexagone."},
+{id:"hq11",matiere:"histoire",niveau:"facile",q:"Sur une carte, le Nord est…",choix:["en haut","en bas","à droite","à gauche"],bonne:0,expl:"Le Nord est toujours en haut d'une carte."},
+{id:"hq12",matiere:"histoire",niveau:"moyen",q:"Les 4 points cardinaux sont Nord, Sud, Est et…",choix:["Ouest","Centre","Milieu","Bas"],bonne:0,expl:"Nord, Sud, Est, Ouest."},
+{id:"hq13",matiere:"histoire",niveau:"moyen",q:"La France se trouve sur le continent…",choix:["européen","asiatique","africain","américain"],bonne:0,expl:"La France est en Europe."},
+{id:"hq14",matiere:"histoire",niveau:"moyen",q:"La mer Méditerranée borde la France au…",choix:["Sud","Nord","Nord-Ouest","Nord-Est"],bonne:0,expl:"La Méditerranée est au Sud de la France."},
+{id:"hq15",matiere:"histoire",niveau:"moyen",q:"Les Romains construisaient pour amener l'eau des…",choix:["aqueducs","igloos","pyramides","cabanes"],bonne:0,expl:"Les aqueducs transportaient l'eau."},
+{id:"hq16",matiere:"histoire",niveau:"facile",q:"Le drapeau français a pour couleurs…",choix:["bleu, blanc, rouge","vert, blanc, rouge","bleu, jaune, rouge","noir, blanc, rouge"],bonne:0,expl:"Bleu, blanc, rouge."},
+
+/* ===== SCIENCES ===== */
+{id:"sq01",matiere:"sciences",niveau:"facile",q:"Parmi ces éléments, lequel est vivant ?",choix:["un arbre","une pierre","un vélo","une table"],bonne:0,expl:"Un arbre naît, grandit, se reproduit : il est vivant."},
+{id:"sq02",matiere:"sciences",niveau:"moyen",q:"De quoi une plante a-t-elle besoin pour vivre ?",choix:["d'eau et de lumière","de télévision","de musique","de plastique"],bonne:0,expl:"Une plante a besoin d'eau, de lumière et d'air."},
+{id:"sq03",matiere:"sciences",niveau:"facile",q:"Ce qui soutient notre corps, ce sont les…",choix:["os (le squelette)","cheveux","ongles","vêtements"],bonne:0,expl:"Le squelette soutient et protège le corps."},
+{id:"sq04",matiere:"sciences",niveau:"moyen",q:"Qu'est-ce qui fait bouger nos os ?",choix:["les muscles","les cheveux","la peau","les dents"],bonne:0,expl:"Les muscles tirent sur les os pour les faire bouger."},
+{id:"sq05",matiere:"sciences",niveau:"facile",q:"L'eau à l'état solide, c'est…",choix:["la glace","la vapeur","la pluie","le brouillard"],bonne:0,expl:"L'eau solide, c'est la glace."},
+{id:"sq06",matiere:"sciences",niveau:"moyen",important:true,q:"La glace fond (devient liquide) à…",choix:["0 °C","100 °C","50 °C","10 °C"],bonne:0,expl:"La glace fond à 0 °C."},
+{id:"sq07",matiere:"sciences",niveau:"moyen",q:"L'eau bout et se transforme en vapeur à…",choix:["100 °C","0 °C","20 °C","60 °C"],bonne:0,expl:"L'eau bout à 100 °C."},
+{id:"sq08",matiere:"sciences",niveau:"facile",q:"Pour allumer une lampe, la boucle du circuit doit être…",choix:["fermée","ouverte","cassée","vide"],bonne:0,expl:"Le courant ne passe que dans une boucle fermée."},
+{id:"sq09",matiere:"sciences",niveau:"moyen",q:"Dans un circuit, la pile fournit…",choix:["l'électricité","l'eau","l'air","la lumière du Soleil"],bonne:0,expl:"La pile fournit l'énergie électrique."},
+{id:"sq10",matiere:"sciences",niveau:"facile",q:"La Terre tourne sur elle-même en…",choix:["24 heures","1 an","1 mois","1 heure"],bonne:0,expl:"24 h : cela crée le jour et la nuit."},
+{id:"sq11",matiere:"sciences",niveau:"moyen",q:"La Terre tourne autour du Soleil en…",choix:["1 an","1 jour","1 semaine","24 heures"],bonne:0,expl:"1 an : cela crée les saisons."},
+{id:"sq12",matiere:"sciences",niveau:"facile",q:"Le jour et la nuit existent parce que la Terre…",choix:["tourne sur elle-même","est plate","est immobile","est petite"],bonne:0,expl:"En tournant, un côté est éclairé, l'autre non."},
+{id:"sq13",matiere:"sciences",niveau:"moyen",q:"Un objet fabriqué par l'homme pour un besoin est un…",choix:["objet technique","être vivant","animal","minéral"],bonne:0,expl:"C'est un objet technique (ex : un vélo)."},
+{id:"sq14",matiere:"sciences",niveau:"facile",q:"Lequel de ces matériaux est un métal ?",choix:["le fer","le bois","le verre","le plastique"],bonne:0,expl:"Le fer est un métal."},
+{id:"sq15",matiere:"sciences",niveau:"moyen",q:"Quel matériau est transparent ?",choix:["le verre","le bois","le fer","le carton"],bonne:0,expl:"Le verre laisse passer la lumière : il est transparent."},
+{id:"sq16",matiere:"sciences",niveau:"facile",q:"La Lune tourne autour de…",choix:["la Terre","le Soleil","Mars","Jupiter"],bonne:0,expl:"La Lune est le satellite de la Terre."},
+
+/* ===== EMC ===== */
+{id:"eq01",matiere:"emc",niveau:"facile",q:"Le drapeau français est…",choix:["bleu, blanc, rouge","rouge et jaune","vert et blanc","noir et rouge"],bonne:0,expl:"Le drapeau tricolore : bleu, blanc, rouge."},
+{id:"eq02",matiere:"emc",niveau:"facile",important:true,q:"La devise de la France est…",choix:["Liberté, Égalité, Fraternité","Un pour tous","Vive le roi","Paix et amour"],bonne:0,expl:"« Liberté, Égalité, Fraternité »."},
+{id:"eq03",matiere:"emc",niveau:"moyen",q:"La fête nationale française est le…",choix:["14 juillet","25 décembre","1er janvier","1er mai"],bonne:0,expl:"Le 14 juillet."},
+{id:"eq04",matiere:"emc",niveau:"facile",q:"La femme qui symbolise la République s'appelle…",choix:["Marianne","Jeanne","Sophie","Marie"],bonne:0,expl:"C'est Marianne."},
+{id:"eq05",matiere:"emc",niveau:"moyen",q:"L'hymne national français est…",choix:["La Marseillaise","God Save the King","La Cucaracha","Frère Jacques"],bonne:0,expl:"L'hymne est La Marseillaise."},
+{id:"eq06",matiere:"emc",niveau:"facile",q:"À l'école, les règles servent à…",choix:["bien vivre ensemble","embêter les élèves","perdre du temps","rien"],bonne:0,expl:"Les règles permettent de vivre ensemble en respect."},
+{id:"eq07",matiere:"emc",niveau:"moyen",q:"La loi, c'est…",choix:["la même pour tous","seulement pour les enfants","seulement pour les adultes","facultative"],bonne:0,expl:"La loi est la même pour tous et protège chacun."},
+{id:"eq08",matiere:"emc",niveau:"facile",q:"Quel est un droit de l'enfant ?",choix:["aller à l'école","conduire une voiture","voter","travailler la nuit"],bonne:0,expl:"Aller à l'école est un droit de l'enfant."},
+{id:"eq09",matiere:"emc",niveau:"moyen",q:"Quel est un devoir de l'élève ?",choix:["respecter les autres","crier en classe","tricher","abîmer le matériel"],bonne:0,expl:"Respecter les autres est un devoir."},
+{id:"eq10",matiere:"emc",niveau:"moyen",q:"En démocratie, pour choisir ses représentants, on…",choix:["vote","tire tout au sort","se bat","ne fait rien"],bonne:0,expl:"On vote : c'est le principe de la démocratie."},
+/* ===== MATHS (+85) ===== */
+{id:"mx01",matiere:"maths",niveau:"facile",q:"Combien font 45 + 30 ?",choix:["75","70","85","65"],bonne:0,expl:"45 + 30 = 75."},
+{id:"mx02",matiere:"maths",niveau:"facile",q:"Combien font 68 + 7 ?",choix:["75","74","65","78"],bonne:0,expl:"68 + 7 = 75."},
+{id:"mx03",matiere:"maths",niveau:"facile",q:"Combien font 100 − 40 ?",choix:["60","50","70","40"],bonne:0,expl:"100 − 40 = 60."},
+{id:"mx04",matiere:"maths",niveau:"facile",q:"Combien font 83 − 9 ?",choix:["74","76","73","72"],bonne:0,expl:"83 − 9 = 74."},
+{id:"mx05",matiere:"maths",niveau:"facile",q:"Combien font 250 + 250 ?",choix:["500","400","550","450"],bonne:0,expl:"250 + 250 = 500."},
+{id:"mx06",matiere:"maths",niveau:"facile",q:"Quel est le double de 35 ?",choix:["70","65","75","60"],bonne:0,expl:"35 × 2 = 70."},
+{id:"mx07",matiere:"maths",niveau:"facile",q:"Quelle est la moitié de 48 ?",choix:["24","22","26","28"],bonne:0,expl:"48 ÷ 2 = 24."},
+{id:"mx08",matiere:"maths",niveau:"facile",q:"Combien faut-il ajouter à 70 pour faire 100 ?",choix:["30","40","20","35"],bonne:0,expl:"70 + 30 = 100."},
+{id:"mx09",matiere:"maths",niveau:"moyen",q:"Combien font 125 + 78 ?",choix:["203","213","193","207"],bonne:0,expl:"125 + 78 = 203."},
+{id:"mx10",matiere:"maths",niveau:"moyen",q:"Combien font 204 − 57 ?",choix:["147","157","143","137"],bonne:0,expl:"204 − 57 = 147."},
+{id:"mx11",matiere:"maths",niveau:"facile",important:true,q:"Combien font 7 × 6 ?",choix:["42","48","36","40"],bonne:0,expl:"7 × 6 = 42."},
+{id:"mx12",matiere:"maths",niveau:"facile",important:true,q:"Combien font 8 × 9 ?",choix:["72","64","81","74"],bonne:0,expl:"8 × 9 = 72."},
+{id:"mx13",matiere:"maths",niveau:"facile",q:"Combien font 9 × 4 ?",choix:["36","32","40","45"],bonne:0,expl:"9 × 4 = 36."},
+{id:"mx14",matiere:"maths",niveau:"facile",q:"Combien font 5 × 8 ?",choix:["40","45","35","48"],bonne:0,expl:"5 × 8 = 40."},
+{id:"mx15",matiere:"maths",niveau:"facile",q:"Combien font 3 × 12 ?",choix:["36","33","39","30"],bonne:0,expl:"3 × 12 = 36."},
+{id:"mx16",matiere:"maths",niveau:"moyen",q:"Combien font 25 × 4 ?",choix:["100","90","110","95"],bonne:0,expl:"25 × 4 = 100."},
+{id:"mx17",matiere:"maths",niveau:"moyen",q:"Combien font 12 × 11 ?",choix:["132","121","144","122"],bonne:0,expl:"12 × 11 = 132."},
+{id:"mx18",matiere:"maths",niveau:"moyen",q:"Combien font 15 × 6 ?",choix:["90","80","96","85"],bonne:0,expl:"15 × 6 = 90."},
+{id:"mx19",matiere:"maths",niveau:"facile",q:"Quel est le triple de 20 ?",choix:["60","40","50","70"],bonne:0,expl:"20 × 3 = 60."},
+{id:"mx20",matiere:"maths",niveau:"moyen",q:"Combien font 40 × 10 ?",choix:["400","40","4000","440"],bonne:0,expl:"× 10 : on ajoute un zéro → 400."},
+{id:"mx21",matiere:"maths",niveau:"facile",q:"Combien font 36 ÷ 6 ?",choix:["6","5","7","8"],bonne:0,expl:"36 ÷ 6 = 6."},
+{id:"mx22",matiere:"maths",niveau:"facile",q:"Combien font 81 ÷ 9 ?",choix:["9","8","7","6"],bonne:0,expl:"81 ÷ 9 = 9."},
+{id:"mx23",matiere:"maths",niveau:"facile",q:"Combien font 50 ÷ 5 ?",choix:["10","5","15","20"],bonne:0,expl:"50 ÷ 5 = 10."},
+{id:"mx24",matiere:"maths",niveau:"moyen",q:"Combien font 144 ÷ 12 ?",choix:["12","14","11","10"],bonne:0,expl:"144 ÷ 12 = 12."},
+{id:"mx25",matiere:"maths",niveau:"moyen",q:"Combien font 100 ÷ 4 ?",choix:["25","20","30","24"],bonne:0,expl:"100 ÷ 4 = 25."},
+{id:"mx26",matiere:"maths",niveau:"moyen",q:"Quel est le quart de 40 ?",choix:["10","20","8","5"],bonne:0,expl:"40 ÷ 4 = 10."},
+{id:"mx27",matiere:"maths",niveau:"facile",q:"Quelle est la moitié de 100 ?",choix:["50","40","25","60"],bonne:0,expl:"100 ÷ 2 = 50."},
+{id:"mx28",matiere:"maths",niveau:"moyen",q:"Combien font 1/4 de 20 ?",choix:["5","4","10","6"],bonne:0,expl:"20 ÷ 4 = 5."},
+{id:"mx29",matiere:"maths",niveau:"moyen",q:"Combien font 1/3 de 30 ?",choix:["10","15","6","12"],bonne:0,expl:"30 ÷ 3 = 10."},
+{id:"mx30",matiere:"maths",niveau:"facile",q:"Combien font 1/2 de 60 ?",choix:["30","20","40","15"],bonne:0,expl:"60 ÷ 2 = 30."},
+{id:"mx31",matiere:"maths",niveau:"moyen",q:"Combien font 2,5 + 1,5 ?",choix:["4","3","4,5","3,5"],bonne:0,expl:"2,5 + 1,5 = 4."},
+{id:"mx32",matiere:"maths",niveau:"moyen",q:"Combien font 3,2 + 0,8 ?",choix:["4","4,10","3,10","3,8"],bonne:0,expl:"3,2 + 0,8 = 4."},
+{id:"mx33",matiere:"maths",niveau:"moyen",q:"Combien font 5 − 0,5 ?",choix:["4,5","5,5","4","0,5"],bonne:0,expl:"5 − 0,5 = 4,5."},
+{id:"mx34",matiere:"maths",niveau:"moyen",q:"Quel est le plus grand : 0,7 ou 0,25 ?",choix:["0,7","0,25","ils sont égaux","0,025"],bonne:0,expl:"0,7 = 0,70, c'est plus grand que 0,25."},
+{id:"mx35",matiere:"maths",niveau:"facile",q:"Quel est le plus grand nombre ?",choix:["1002","999","1001","990"],bonne:0,expl:"1002 est le plus grand."},
+{id:"mx36",matiere:"maths",niveau:"facile",q:"Dans 3 476, quel est le chiffre des centaines ?",choix:["4","3","7","6"],bonne:0,expl:"3 (milliers) 4 (centaines) 7 (dizaines) 6 (unités)."},
+{id:"mx37",matiere:"maths",niveau:"facile",q:"Dans 3 476, quel est le chiffre des dizaines ?",choix:["7","4","6","3"],bonne:0,expl:"Le chiffre des dizaines est 7."},
+{id:"mx38",matiere:"maths",niveau:"moyen",q:"L'arrondi de 47 à la dizaine est…",choix:["50","40","45","47"],bonne:0,expl:"47 est plus proche de 50."},
+{id:"mx39",matiere:"maths",niveau:"moyen",q:"L'arrondi de 132 à la centaine est…",choix:["100","200","130","150"],bonne:0,expl:"132 est plus proche de 100."},
+{id:"mx40",matiere:"maths",niveau:"facile",q:"Quel nombre vient juste avant 1000 ?",choix:["999","1001","990","998"],bonne:0,expl:"C'est 999."},
+{id:"mx41",matiere:"maths",niveau:"facile",q:"Combien font 100 de plus que 450 ?",choix:["550","460","500","650"],bonne:0,expl:"450 + 100 = 550."},
+{id:"mx42",matiere:"maths",niveau:"facile",q:"Combien font 10 de moins que 205 ?",choix:["195","215","204","200"],bonne:0,expl:"205 − 10 = 195."},
+{id:"mx43",matiere:"maths",niveau:"facile",q:"1 mètre = combien de centimètres ?",choix:["100","10","1000","50"],bonne:0,expl:"1 m = 100 cm."},
+{id:"mx44",matiere:"maths",niveau:"facile",q:"1 kilomètre = combien de mètres ?",choix:["1000","100","10000","500"],bonne:0,expl:"1 km = 1000 m."},
+{id:"mx45",matiere:"maths",niveau:"facile",q:"1 kilogramme = combien de grammes ?",choix:["1000","100","10","500"],bonne:0,expl:"1 kg = 1000 g."},
+{id:"mx46",matiere:"maths",niveau:"moyen",q:"2 m et 30 cm, c'est combien de centimètres ?",choix:["230","203","23","2300"],bonne:0,expl:"2 m = 200 cm ; + 30 = 230 cm."},
+{id:"mx47",matiere:"maths",niveau:"moyen",q:"1 litre = combien de millilitres ?",choix:["1000","100","10","500"],bonne:0,expl:"1 L = 1000 mL."},
+{id:"mx48",matiere:"maths",niveau:"facile",q:"Combien de minutes dans 1 heure ?",choix:["60","100","30","24"],bonne:0,expl:"1 h = 60 min."},
+{id:"mx49",matiere:"maths",niveau:"moyen",q:"Combien de minutes dans 2 h 30 ?",choix:["150","230","120","90"],bonne:0,expl:"2 × 60 + 30 = 150 min."},
+{id:"mx50",matiere:"maths",niveau:"facile",q:"Combien d'heures dans une journée ?",choix:["24","12","60","30"],bonne:0,expl:"1 jour = 24 h."},
+{id:"mx51",matiere:"maths",niveau:"facile",q:"Combien de jours dans une semaine ?",choix:["7","5","30","12"],bonne:0,expl:"1 semaine = 7 jours."},
+{id:"mx52",matiere:"maths",niveau:"facile",q:"Combien de mois dans une année ?",choix:["12","10","7","365"],bonne:0,expl:"1 an = 12 mois."},
+{id:"mx53",matiere:"maths",niveau:"moyen",q:"Un film commence à 14 h et dure 2 h. Il finit à…",choix:["16 h","15 h","17 h","13 h"],bonne:0,expl:"14 h + 2 h = 16 h."},
+{id:"mx54",matiere:"maths",niveau:"facile",q:"Combien font 2 € + 50 centimes ?",choix:["2,50 €","2,05 €","25 €","2 €"],bonne:0,expl:"50 c = 0,50 € → 2,50 €."},
+{id:"mx55",matiere:"maths",niveau:"moyen",q:"J'ai 10 €, j'achète pour 6,50 €. Il me reste…",choix:["3,50 €","4,50 €","3 €","4 €"],bonne:0,expl:"10 − 6,50 = 3,50 €."},
+{id:"mx56",matiere:"maths",niveau:"moyen",q:"5 bonbons à 2 € chacun coûtent…",choix:["10 €","7 €","12 €","8 €"],bonne:0,expl:"5 × 2 = 10 €."},
+{id:"mx57",matiere:"maths",niveau:"facile",q:"Combien de côtés a un carré ?",choix:["4","3","5","6"],bonne:0,expl:"Un carré a 4 côtés égaux."},
+{id:"mx58",matiere:"maths",niveau:"facile",q:"Combien de côtés a un triangle ?",choix:["3","4","2","5"],bonne:0,expl:"Un triangle a 3 côtés."},
+{id:"mx59",matiere:"maths",niveau:"facile",q:"Le périmètre d'un carré de côté 5 cm est…",choix:["20 cm","10 cm","25 cm","15 cm"],bonne:0,expl:"4 × 5 = 20 cm."},
+{id:"mx60",matiere:"maths",niveau:"moyen",q:"Périmètre d'un rectangle de 6 cm sur 4 cm ?",choix:["20 cm","24 cm","10 cm","12 cm"],bonne:0,expl:"(6 + 4) × 2 = 20 cm."},
+{id:"mx61",matiere:"maths",niveau:"facile",q:"Combien de faces a un cube ?",choix:["6","4","8","12"],bonne:0,expl:"Un cube a 6 faces carrées."},
+{id:"mx62",matiere:"maths",niveau:"facile",q:"Combien mesure un angle droit ?",choix:["90°","180°","45°","100°"],bonne:0,expl:"Un angle droit mesure 90°."},
+{id:"mx63",matiere:"maths",niveau:"moyen",q:"Aire d'un rectangle de 5 carreaux sur 3 ?",choix:["15","8","16","10"],bonne:0,expl:"5 × 3 = 15 carreaux."},
+{id:"mx64",matiere:"maths",niveau:"facile",q:"Une figure à 4 côtés égaux et 4 angles droits est un…",choix:["carré","triangle","cercle","losange"],bonne:0,expl:"C'est le carré."},
+{id:"mx65",matiere:"maths",niveau:"facile",q:"Combien de sommets a un triangle ?",choix:["3","4","2","6"],bonne:0,expl:"Un triangle a 3 sommets."},
+{id:"mx66",matiere:"maths",niveau:"moyen",q:"Dans une classe de 28 élèves, la moitié sont des filles. Combien de filles ?",choix:["14","12","16","28"],bonne:0,expl:"28 ÷ 2 = 14."},
+{id:"mx67",matiere:"maths",niveau:"moyen",q:"Un paquet contient 6 gâteaux. Combien dans 4 paquets ?",choix:["24","20","18","26"],bonne:0,expl:"6 × 4 = 24."},
+{id:"mx68",matiere:"maths",niveau:"moyen",q:"72 images partagées entre 8 enfants, chacun en a…",choix:["9","8","7","6"],bonne:0,expl:"72 ÷ 8 = 9."},
+{id:"mx69",matiere:"maths",niveau:"moyen",q:"Léo a 45 billes, il en gagne 18. Il en a…",choix:["63","53","27","62"],bonne:0,expl:"45 + 18 = 63."},
+{id:"mx70",matiere:"maths",niveau:"moyen",q:"Un livre a 120 pages, Ace en a lu 45. Il reste…",choix:["75","85","65","155"],bonne:0,expl:"120 − 45 = 75 pages."},
+{id:"mx71",matiere:"maths",niveau:"difficile",q:"3 paquets de 25 stickers, ça fait…",choix:["75","70","80","65"],bonne:0,expl:"3 × 25 = 75."},
+{id:"mx72",matiere:"maths",niveau:"difficile",q:"Un train part à 9 h 15 et roule 3 h. Il arrive à…",choix:["12 h 15","11 h 15","12 h 45","10 h 15"],bonne:0,expl:"9 h 15 + 3 h = 12 h 15."},
+{id:"mx73",matiere:"maths",niveau:"facile",q:"Suite : 2, 4, 6, 8, … Quel nombre suit ?",choix:["10","9","12","11"],bonne:0,expl:"On ajoute 2 → 10."},
+{id:"mx74",matiere:"maths",niveau:"facile",q:"Suite : 5, 10, 15, … Quel nombre suit ?",choix:["20","25","16","30"],bonne:0,expl:"On ajoute 5 → 20."},
+{id:"mx75",matiere:"maths",niveau:"moyen",q:"Suite : 3, 6, 9, 12, … Quel nombre suit ?",choix:["15","14","18","13"],bonne:0,expl:"On ajoute 3 → 15."},
+{id:"mx76",matiere:"maths",niveau:"facile",q:"Quel nombre est pair ?",choix:["8","7","5","9"],bonne:0,expl:"8 est pair (se termine par 0,2,4,6,8)."},
+{id:"mx77",matiere:"maths",niveau:"facile",q:"Quel nombre est impair ?",choix:["7","4","6","10"],bonne:0,expl:"7 est impair."},
+{id:"mx78",matiere:"maths",niveau:"moyen",q:"Combien font 10 × 10 ?",choix:["100","20","1000","110"],bonne:0,expl:"10 × 10 = 100."},
+{id:"mx79",matiere:"maths",niveau:"moyen",q:"Combien font 100 × 5 ?",choix:["500","105","5000","50"],bonne:0,expl:"100 × 5 = 500."},
+{id:"mx80",matiere:"maths",niveau:"facile",q:"« trois cent douze » s'écrit…",choix:["312","3012","30012","3120"],bonne:0,expl:"312."},
+{id:"mx81",matiere:"maths",niveau:"facile",q:"« mille » s'écrit…",choix:["1000","100","10000","10"],bonne:0,expl:"1000."},
+{id:"mx82",matiere:"maths",niveau:"moyen",q:"Combien font 6 + 7, et est-ce pair ou impair ?",choix:["13, impair","13, pair","12, pair","14, pair"],bonne:0,expl:"6 + 7 = 13, un nombre impair."},
+{id:"mx83",matiere:"maths",niveau:"facile",q:"Combien font 0 × 9 ?",choix:["0","9","90","1"],bonne:0,expl:"Tout nombre × 0 = 0."},
+{id:"mx84",matiere:"maths",niveau:"facile",q:"Combien font 1 × 7 ?",choix:["7","1","8","0"],bonne:0,expl:"Tout nombre × 1 = lui-même."},
+{id:"mx85",matiere:"maths",niveau:"moyen",q:"Quel nombre vient juste après 199 ?",choix:["200","190","201","100"],bonne:0,expl:"C'est 200."},
+
+/* ===== FRANÇAIS (+55) ===== */
+{id:"fx01",matiere:"francais",niveau:"facile",q:"« Je (être) grand. » On écrit :",choix:["je suis","je es","je est","je sont"],bonne:0,expl:"Verbe être : je suis."},
+{id:"fx02",matiere:"francais",niveau:"facile",q:"« Tu (avoir) un chat. » On écrit :",choix:["tu as","tu a","tu ai","tu as eu"],bonne:0,expl:"Verbe avoir : tu as."},
+{id:"fx03",matiere:"francais",niveau:"facile",q:"« Nous (aller) à l'école. » On écrit :",choix:["nous allons","nous allez","nous allont","nous va"],bonne:0,expl:"Verbe aller : nous allons."},
+{id:"fx04",matiere:"francais",niveau:"moyen",q:"« Ils (manger) une pomme. » On écrit :",choix:["ils mangent","ils mange","ils manges","ils mangeons"],bonne:0,expl:"3e pers. pluriel : ils mangent."},
+{id:"fx05",matiere:"francais",niveau:"facile",q:"« Elle (chanter). » On écrit :",choix:["elle chante","elle chantes","elle chantent","elle chanter"],bonne:0,expl:"3e pers. singulier : elle chante."},
+{id:"fx06",matiere:"francais",niveau:"moyen",q:"« Vous (finir). » On écrit :",choix:["vous finissez","vous finis","vous finit","vous finissent"],bonne:0,expl:"Verbe finir : vous finissez."},
+{id:"fx07",matiere:"francais",niveau:"moyen",q:"À l'imparfait, « je (jouer) » donne :",choix:["je jouais","je joue","je jouerai","j'ai joué"],bonne:0,expl:"Imparfait : je jouais."},
+{id:"fx08",matiere:"francais",niveau:"moyen",q:"Au futur, « nous (partir) » donne :",choix:["nous partirons","nous partons","nous partions","nous sommes partis"],bonne:0,expl:"Futur : nous partirons."},
+{id:"fx09",matiere:"francais",niveau:"moyen",q:"Au passé composé, « il (tomber) » donne :",choix:["il est tombé","il tombe","il tombait","il tombera"],bonne:0,expl:"Passé composé avec être : il est tombé."},
+{id:"fx10",matiere:"francais",niveau:"facile",q:"Avec le mot « hier », on utilise plutôt le…",choix:["passé","présent","futur","conditionnel"],bonne:0,expl:"« Hier » = une action passée."},
+{id:"fx11",matiere:"francais",niveau:"facile",q:"Avec le mot « demain », on utilise plutôt le…",choix:["futur","présent","passé","imparfait"],bonne:0,expl:"« Demain » = une action future."},
+{id:"fx12",matiere:"francais",niveau:"facile",q:"L'infinitif de « je mange » est…",choix:["manger","mangé","mangeais","mangement"],bonne:0,expl:"L'infinitif est « manger »."},
+{id:"fx13",matiere:"francais",niveau:"moyen",q:"L'infinitif de « nous finissons » est…",choix:["finir","finissant","fini","finissement"],bonne:0,expl:"L'infinitif est « finir »."},
+{id:"fx14",matiere:"francais",niveau:"moyen",q:"« Les enfants … dans la cour. »",choix:["jouent","joue","joues","jouer"],bonne:0,expl:"Sujet pluriel → jouent."},
+{id:"fx15",matiere:"francais",niveau:"facile",q:"« Le chien … . »",choix:["aboie","aboient","aboies","aboyer"],bonne:0,expl:"Sujet singulier → aboie."},
+{id:"fx16",matiere:"francais",niveau:"moyen",q:"Le pluriel de « un chat noir » est…",choix:["des chats noirs","des chat noirs","des chats noir","des chats noire"],bonne:0,expl:"Nom et adjectif au pluriel : chats noirs."},
+{id:"fx17",matiere:"francais",niveau:"facile",q:"Le féminin de « un ami » est…",choix:["une amie","une ami","un amie","une amis"],bonne:0,expl:"Féminin : une amie."},
+{id:"fx18",matiere:"francais",niveau:"moyen",q:"Le pluriel de « cheval » est…",choix:["chevaux","chevals","chevaus","cheveaux"],bonne:0,expl:"Les mots en -al font -aux : chevaux."},
+{id:"fx19",matiere:"francais",niveau:"moyen",q:"Le pluriel de « un journal » est…",choix:["des journaux","des journals","des journeaux","des journal"],bonne:0,expl:"-al → -aux : journaux."},
+{id:"fx20",matiere:"francais",niveau:"moyen",q:"Le pluriel de « un bijou » est…",choix:["des bijoux","des bijous","des bijoues","des bijow"],bonne:0,expl:"Bijou fait partie des mots en -oux."},
+{id:"fx21",matiere:"francais",niveau:"facile",q:"Le pluriel de « un jeu » est…",choix:["des jeux","des jeus","des jeaux","des jeuxs"],bonne:0,expl:"-eu → -eux : jeux."},
+{id:"fx22",matiere:"francais",niveau:"facile",q:"« Il … malade. » (verbe être)",choix:["est","es","et","ai"],bonne:0,expl:"On peut dire « il était » → est."},
+{id:"fx23",matiere:"francais",niveau:"facile",q:"« Un chien … un chat. » (et / est)",choix:["et","est","es","ai"],bonne:0,expl:"« et » relie deux mots (chien ET chat)."},
+{id:"fx24",matiere:"francais",niveau:"facile",q:"« Je vais … la piscine. » (à / a)",choix:["à","a","as","at"],bonne:0,expl:"« à » = préposition de lieu."},
+{id:"fx25",matiere:"francais",niveau:"facile",q:"« Elle … un vélo. » (a / à)",choix:["a","à","as","at"],bonne:0,expl:"« a » = verbe avoir (elle possède)."},
+{id:"fx26",matiere:"francais",niveau:"moyen",q:"« Ils … des jouets. » (ont / on)",choix:["ont","on","onts","hont"],bonne:0,expl:"« ont » = verbe avoir (ils possèdent)."},
+{id:"fx27",matiere:"francais",niveau:"moyen",q:"« … joue dans la cour. » (on / ont)",choix:["On","Ont","Onts","Om"],bonne:0,expl:"« On » = pronom (on peut dire « il »)."},
+{id:"fx28",matiere:"francais",niveau:"moyen",q:"« … vas-tu ? » (indique le lieu)",choix:["Où","Ou","Houx","Oux"],bonne:0,expl:"« Où » (avec accent) indique le lieu."},
+{id:"fx29",matiere:"francais",niveau:"moyen",q:"« Tu veux du thé … du café ? » (ou / où)",choix:["ou","où","houx","oux"],bonne:0,expl:"« ou » = choix (thé OU café)."},
+{id:"fx30",matiere:"francais",niveau:"moyen",q:"« J'aime … chaussures (les miennes). » (ces / ses)",choix:["ses","ces","c'est","sais"],bonne:0,expl:"« ses » = à elle/lui (les siennes)."},
+{id:"fx31",matiere:"francais",niveau:"facile",q:"Dans « le chat dort », « chat » est un…",choix:["nom","verbe","adjectif","adverbe"],bonne:0,expl:"« chat » est un nom."},
+{id:"fx32",matiere:"francais",niveau:"facile",q:"Dans « le chat dort », « dort » est un…",choix:["verbe","nom","adjectif","déterminant"],bonne:0,expl:"« dort » est un verbe (action)."},
+{id:"fx33",matiere:"francais",niveau:"moyen",q:"« grand » dans « un grand jardin » est un…",choix:["adjectif","nom","verbe","pronom"],bonne:0,expl:"« grand » qualifie le nom : c'est un adjectif."},
+{id:"fx34",matiere:"francais",niveau:"moyen",q:"« le », « la », « un » sont des…",choix:["déterminants","verbes","adjectifs","adverbes"],bonne:0,expl:"Ce sont des déterminants (articles)."},
+{id:"fx35",matiere:"francais",niveau:"moyen",q:"« je », « tu », « il » sont des…",choix:["pronoms","noms","verbes","adjectifs"],bonne:0,expl:"Ce sont des pronoms personnels."},
+{id:"fx36",matiere:"francais",niveau:"moyen",q:"Dans « Paul mange une pomme », le sujet est…",choix:["Paul","mange","une pomme","rien"],bonne:0,expl:"Qui mange ? Paul → sujet."},
+{id:"fx37",matiere:"francais",niveau:"facile",q:"On met une majuscule au début d'une…",choix:["phrase","syllabe","lettre","liste"],bonne:0,expl:"Chaque phrase commence par une majuscule."},
+{id:"fx38",matiere:"francais",niveau:"facile",q:"À la fin d'une question, on met…",choix:["?","!",".",","],bonne:0,expl:"Le point d'interrogation."},
+{id:"fx39",matiere:"francais",niveau:"facile",q:"Pour montrer une forte émotion, on met…",choix:["!","?",".",";"],bonne:0,expl:"Le point d'exclamation."},
+{id:"fx40",matiere:"francais",niveau:"facile",q:"Un synonyme de « content » est…",choix:["heureux","triste","fâché","fatigué"],bonne:0,expl:"content = heureux."},
+{id:"fx41",matiere:"francais",niveau:"facile",q:"Le contraire de « grand » est…",choix:["petit","gros","haut","long"],bonne:0,expl:"grand ≠ petit."},
+{id:"fx42",matiere:"francais",niveau:"facile",q:"Le contraire de « chaud » est…",choix:["froid","tiède","brûlant","doux"],bonne:0,expl:"chaud ≠ froid."},
+{id:"fx43",matiere:"francais",niveau:"facile",q:"Un synonyme de « joli » est…",choix:["beau","laid","moche","vilain"],bonne:0,expl:"joli = beau."},
+{id:"fx44",matiere:"francais",niveau:"moyen",q:"Quel mot appartient à la famille de « dent » ?",choix:["dentiste","dedans","denrée","dindon"],bonne:0,expl:"dentiste vient de « dent »."},
+{id:"fx45",matiere:"francais",niveau:"moyen",q:"Quel mot vient en premier dans le dictionnaire ?",choix:["ballon","banane","bateau","boule"],bonne:0,expl:"Ordre alphabétique : ballon (ba-l) avant banane."},
+{id:"fx46",matiere:"francais",niveau:"moyen",q:"Comment écrit-on correctement ?",choix:["important","inportant","imbortant","inbortant"],bonne:0,expl:"Devant « p », on écrit « m » : important."},
+{id:"fx47",matiere:"francais",niveau:"moyen",q:"Comment écrit-on correctement ?",choix:["chambre","chanbre","champre","chamdre"],bonne:0,expl:"Devant « b », on écrit « m » : chambre."},
+{id:"fx48",matiere:"francais",niveau:"moyen",q:"Comment écrit-on le son [s] dans ce mot ?",choix:["garçon","garson","garçzon","garsson"],bonne:0,expl:"Le « ç » fait le son [s] devant o : garçon."},
+{id:"fx49",matiere:"francais",niveau:"difficile",q:"La lettre « g » se prononce [j] (comme girafe) devant…",choix:["e, i","a, o","u","les consonnes"],bonne:0,expl:"g + e/i = son [j] (girafe, geler)."},
+{id:"fx50",matiere:"francais",niveau:"facile",q:"Combien de syllabes dans « chocolat » ?",choix:["3","2","4","1"],bonne:0,expl:"cho-co-lat = 3 syllabes."},
+{id:"fx51",matiere:"francais",niveau:"moyen",q:"Dans « Les fille sont contentes », l'erreur est sur…",choix:["fille (→ filles)","sont","contentes","les"],bonne:0,expl:"« filles » doit être au pluriel."},
+{id:"fx52",matiere:"francais",niveau:"moyen",q:"Le pluriel de « un genou » est…",choix:["des genoux","des genous","des genoues","des geneoux"],bonne:0,expl:"genou fait partie des mots en -oux."},
+{id:"fx53",matiere:"francais",niveau:"moyen",q:"Le féminin de « un acteur » est…",choix:["une actrice","une acteure","une acteuse","une actrisse"],bonne:0,expl:"Féminin : une actrice."},
+{id:"fx54",matiere:"francais",niveau:"facile",q:"« Il … faim. » (a / à)",choix:["a","à","as","ah"],bonne:0,expl:"« a » = verbe avoir (il possède la faim)."},
+{id:"fx55",matiere:"francais",niveau:"moyen",q:"Le passé composé se forme avec « avoir » ou…",choix:["être","aller","faire","venir"],bonne:0,expl:"Auxiliaires : avoir ou être (il est allé)."},
+
+/* ===== ANGLAIS (+26) ===== */
+{id:"ax01",matiere:"anglais",niveau:"facile",q:"« Hello » veut dire…",choix:["Bonjour","Au revoir","Merci","Oui"],bonne:0,expl:"Hello = Bonjour."},
+{id:"ax02",matiere:"anglais",niveau:"facile",q:"« Thank you » veut dire…",choix:["Merci","Bonjour","Pardon","Non"],bonne:0,expl:"Thank you = Merci."},
+{id:"ax03",matiere:"anglais",niveau:"facile",q:"« Goodbye » veut dire…",choix:["Au revoir","Bonjour","S'il te plaît","Bienvenue"],bonne:0,expl:"Goodbye = Au revoir."},
+{id:"ax04",matiere:"anglais",niveau:"facile",q:"« a cat » veut dire…",choix:["un chat","un chien","un oiseau","une souris"],bonne:0,expl:"cat = chat."},
+{id:"ax05",matiere:"anglais",niveau:"facile",q:"« a dog » veut dire…",choix:["un chien","un chat","un cheval","un lapin"],bonne:0,expl:"dog = chien."},
+{id:"ax06",matiere:"anglais",niveau:"facile",q:"« red » est la couleur…",choix:["rouge","bleu","vert","jaune"],bonne:0,expl:"red = rouge."},
+{id:"ax07",matiere:"anglais",niveau:"facile",q:"« blue » est la couleur…",choix:["bleu","rouge","noir","blanc"],bonne:0,expl:"blue = bleu."},
+{id:"ax08",matiere:"anglais",niveau:"facile",q:"« green » est la couleur…",choix:["vert","rouge","jaune","gris"],bonne:0,expl:"green = vert."},
+{id:"ax09",matiere:"anglais",niveau:"facile",q:"« one, two, three » veut dire…",choix:["un, deux, trois","trois, deux, un","un, trois, deux","deux, un, trois"],bonne:0,expl:"one=1, two=2, three=3."},
+{id:"ax10",matiere:"anglais",niveau:"facile",q:"« ten » veut dire…",choix:["dix","deux","douze","dix-neuf"],bonne:0,expl:"ten = 10."},
+{id:"ax11",matiere:"anglais",niveau:"moyen",q:"« Monday » est un…",choix:["jour (lundi)","mois","couleur","nombre"],bonne:0,expl:"Monday = lundi."},
+{id:"ax12",matiere:"anglais",niveau:"facile",q:"« school » veut dire…",choix:["école","maison","voiture","jardin"],bonne:0,expl:"school = école."},
+{id:"ax13",matiere:"anglais",niveau:"facile",q:"« book » veut dire…",choix:["livre","stylo","table","sac"],bonne:0,expl:"book = livre."},
+{id:"ax14",matiere:"anglais",niveau:"moyen",q:"« I am » veut dire…",choix:["je suis","j'ai","je vais","je fais"],bonne:0,expl:"I am = je suis."},
+{id:"ax15",matiere:"anglais",niveau:"moyen",q:"« you are » veut dire…",choix:["tu es","je suis","il est","nous sommes"],bonne:0,expl:"you are = tu es / vous êtes."},
+{id:"ax16",matiere:"anglais",niveau:"moyen",q:"« I have » veut dire…",choix:["j'ai","je suis","je vais","tu as"],bonne:0,expl:"I have = j'ai."},
+{id:"ax17",matiere:"anglais",niveau:"facile",q:"« my mother » veut dire…",choix:["ma mère","mon père","ma sœur","mon frère"],bonne:0,expl:"mother = mère."},
+{id:"ax18",matiere:"anglais",niveau:"facile",q:"« my brother » veut dire…",choix:["mon frère","ma sœur","ma mère","mon ami"],bonne:0,expl:"brother = frère."},
+{id:"ax19",matiere:"anglais",niveau:"moyen",q:"« What is your name? » demande…",choix:["ton nom","ton âge","l'heure","la couleur"],bonne:0,expl:"On demande ton nom."},
+{id:"ax20",matiere:"anglais",niveau:"moyen",q:"« How old are you? » demande…",choix:["ton âge","ton nom","où tu habites","ta couleur préférée"],bonne:0,expl:"On demande ton âge."},
+{id:"ax21",matiere:"anglais",niveau:"moyen",q:"Le pluriel anglais de « cat » est…",choix:["cats","cates","caties","catz"],bonne:0,expl:"On ajoute -s : cats."},
+{id:"ax22",matiere:"anglais",niveau:"facile",q:"« yes » veut dire…",choix:["oui","non","peut-être","merci"],bonne:0,expl:"yes = oui."},
+{id:"ax23",matiere:"anglais",niveau:"facile",q:"« no » veut dire…",choix:["non","oui","jamais","merci"],bonne:0,expl:"no = non."},
+{id:"ax24",matiere:"anglais",niveau:"moyen",q:"« a big house » veut dire…",choix:["une grande maison","une petite maison","une belle voiture","un grand jardin"],bonne:0,expl:"big = grand, house = maison."},
+{id:"ax25",matiere:"anglais",niveau:"moyen",q:"« I can swim » veut dire…",choix:["je sais nager","je veux nager","je nage maintenant","je ne nage pas"],bonne:0,expl:"can = pouvoir/savoir, swim = nager."},
+{id:"ax26",matiere:"anglais",niveau:"facile",q:"« good morning » veut dire…",choix:["bonjour (le matin)","bonne nuit","bon après-midi","au revoir"],bonne:0,expl:"good morning = bonjour (le matin)."},
+
+/* ===== HISTOIRE-GÉO (+24) ===== */
+{id:"hx01",matiere:"histoire",niveau:"facile",q:"À la Préhistoire, les hommes ont découvert le…",choix:["feu","téléphone","train","ordinateur"],bonne:0,expl:"La maîtrise du feu est une grande découverte préhistorique."},
+{id:"hx02",matiere:"histoire",niveau:"facile",q:"Les premiers hommes vivaient souvent dans des…",choix:["grottes","immeubles","châteaux","gares"],bonne:0,expl:"Ils s'abritaient dans des grottes."},
+{id:"hx03",matiere:"histoire",niveau:"moyen",q:"Les dessins des hommes préhistoriques sur les murs des grottes s'appellent l'art…",choix:["rupestre (pariétal)","moderne","numérique","de rue"],bonne:0,expl:"L'art rupestre (ex : grotte de Lascaux)."},
+{id:"hx04",matiere:"histoire",niveau:"facile",q:"Les Égyptiens ont construit les…",choix:["pyramides","gratte-ciels","cathédrales","châteaux forts"],bonne:0,expl:"Les pyramides sont des tombeaux de pharaons."},
+{id:"hx05",matiere:"histoire",niveau:"moyen",q:"Le chef gaulois qui a résisté aux Romains est…",choix:["Vercingétorix","Napoléon","Louis XIV","Clovis"],bonne:0,expl:"Vercingétorix a affronté Jules César."},
+{id:"hx06",matiere:"histoire",niveau:"moyen",q:"Le général romain qui a conquis la Gaule est…",choix:["Jules César","Vercingétorix","Charlemagne","Clovis"],bonne:0,expl:"Jules César a conquis la Gaule."},
+{id:"hx07",matiere:"histoire",niveau:"moyen",q:"L'écriture des Égyptiens s'appelle les…",choix:["hiéroglyphes","chiffres romains","runes","lettres latines"],bonne:0,expl:"Les hiéroglyphes."},
+{id:"hx08",matiere:"histoire",niveau:"facile",q:"Les grandes églises du Moyen Âge s'appellent des…",choix:["cathédrales","pyramides","arènes","gares"],bonne:0,expl:"Les cathédrales."},
+{id:"hx09",matiere:"histoire",niveau:"moyen",q:"Au Moyen Âge, les paysans travaillaient pour le…",choix:["seigneur","président","maire","pharaon"],bonne:0,expl:"Ils dépendaient de leur seigneur."},
+{id:"hx10",matiere:"histoire",niveau:"moyen",q:"Le roi Louis XIV a fait construire le château de…",choix:["Versailles","la Bastille","Big Ben","Rome"],bonne:0,expl:"Le château de Versailles."},
+{id:"hx11",matiere:"histoire",niveau:"moyen",q:"En 1492, Christophe Colomb découvre l'…",choix:["Amérique","Asie","Australie","Afrique"],bonne:0,expl:"Il atteint l'Amérique."},
+{id:"hx12",matiere:"histoire",niveau:"moyen",q:"L'imprimerie de Gutenberg permet de fabriquer plus facilement des…",choix:["livres","voitures","avions","ordinateurs"],bonne:0,expl:"L'imprimerie a permis de diffuser les livres."},
+{id:"hx13",matiere:"histoire",niveau:"facile",q:"La Révolution française a eu lieu en…",choix:["1789","1492","1918","2000"],bonne:0,expl:"En 1789."},
+{id:"hx14",matiere:"histoire",niveau:"moyen",q:"La plus haute montagne des Alpes est le…",choix:["mont Blanc","mont Everest","Puy de Dôme","Vésuve"],bonne:0,expl:"Le mont Blanc (4 808 m)."},
+{id:"hx15",matiere:"histoire",niveau:"moyen",q:"La chaîne de montagnes entre la France et l'Espagne est…",choix:["les Pyrénées","les Alpes","le Jura","les Vosges"],bonne:0,expl:"Les Pyrénées."},
+{id:"hx16",matiere:"histoire",niveau:"facile",q:"La mer au sud de la France est la mer…",choix:["Méditerranée","du Nord","Rouge","Noire"],bonne:0,expl:"La mer Méditerranée."},
+{id:"hx17",matiere:"histoire",niveau:"moyen",q:"La capitale de l'Angleterre est…",choix:["Londres","Paris","Madrid","Rome"],bonne:0,expl:"Londres."},
+{id:"hx18",matiere:"histoire",niveau:"moyen",q:"La capitale de l'Italie est…",choix:["Rome","Madrid","Berlin","Lisbonne"],bonne:0,expl:"Rome."},
+{id:"hx19",matiere:"histoire",niveau:"moyen",q:"La capitale de l'Espagne est…",choix:["Madrid","Barcelone","Rome","Paris"],bonne:0,expl:"Madrid."},
+{id:"hx20",matiere:"histoire",niveau:"facile",q:"La monnaie utilisée en France est l'…",choix:["euro","dollar","livre","franc"],bonne:0,expl:"L'euro."},
+{id:"hx21",matiere:"histoire",niveau:"moyen",q:"Le grand pays voisin de la France à l'est (capitale Berlin) est…",choix:["l'Allemagne","le Portugal","la Grèce","la Norvège"],bonne:0,expl:"L'Allemagne."},
+{id:"hx22",matiere:"histoire",niveau:"facile",q:"L'océan qui borde la France à l'ouest est l'…",choix:["océan Atlantique","océan Pacifique","océan Indien","océan Arctique"],bonne:0,expl:"L'océan Atlantique."},
+{id:"hx23",matiere:"histoire",niveau:"facile",q:"Notre planète s'appelle la…",choix:["Terre","Lune","Mars","Vénus"],bonne:0,expl:"Nous vivons sur la Terre."},
+{id:"hx24",matiere:"histoire",niveau:"facile",q:"Le Soleil se lève à l'…",choix:["Est","Ouest","Nord","Sud"],bonne:0,expl:"Le Soleil se lève à l'Est."},
+
+/* ===== SCIENCES (+24) ===== */
+{id:"sx01",matiere:"sciences",niveau:"facile",q:"Un animal qui ne mange que des plantes est…",choix:["herbivore","carnivore","omnivore","minéral"],bonne:0,expl:"Herbivore = mange des végétaux."},
+{id:"sx02",matiere:"sciences",niveau:"facile",q:"Un animal qui mange de la viande est…",choix:["carnivore","herbivore","végétal","fossile"],bonne:0,expl:"Carnivore = mange de la viande."},
+{id:"sx03",matiere:"sciences",niveau:"moyen",q:"Un animal qui mange de tout est…",choix:["omnivore","herbivore","carnivore","insecte"],bonne:0,expl:"Omnivore = mange de tout (comme l'humain)."},
+{id:"sx04",matiere:"sciences",niveau:"moyen",q:"La grenouille naît d'abord sous forme de…",choix:["têtard","poussin","chenille","poisson"],bonne:0,expl:"Le têtard devient ensuite grenouille."},
+{id:"sx05",matiere:"sciences",niveau:"facile",q:"La chenille se transforme en…",choix:["papillon","oiseau","poisson","serpent"],bonne:0,expl:"La chenille devient papillon."},
+{id:"sx06",matiere:"sciences",niveau:"facile",q:"Une plante pousse à partir d'une…",choix:["graine","pierre","goutte d'huile","pile"],bonne:0,expl:"La graine germe et donne une plante."},
+{id:"sx07",matiere:"sciences",niveau:"facile",q:"Les oiseaux naissent dans des…",choix:["œufs","graines","cocons","bulbes"],bonne:0,expl:"Les oiseaux pondent des œufs."},
+{id:"sx08",matiere:"sciences",niveau:"facile",q:"Les dents servent à…",choix:["mâcher","respirer","voir","entendre"],bonne:0,expl:"Les dents coupent et mâchent les aliments."},
+{id:"sx09",matiere:"sciences",niveau:"facile",q:"On respire grâce aux…",choix:["poumons","reins","bras","cheveux"],bonne:0,expl:"Les poumons servent à respirer."},
+{id:"sx10",matiere:"sciences",niveau:"moyen",q:"Le cœur sert à…",choix:["faire circuler le sang","digérer","penser","voir"],bonne:0,expl:"Le cœur pompe le sang."},
+{id:"sx11",matiere:"sciences",niveau:"moyen",q:"Nos cinq sens sont la vue, l'ouïe, le toucher, l'odorat et le…",choix:["goût","sommeil","rire","saut"],bonne:0,expl:"Le cinquième sens est le goût."},
+{id:"sx12",matiere:"sciences",niveau:"facile",q:"On voit grâce aux…",choix:["yeux","oreilles","mains","pieds"],bonne:0,expl:"Les yeux servent à voir."},
+{id:"sx13",matiere:"sciences",niveau:"facile",q:"L'air est un…",choix:["gaz","solide","liquide","métal"],bonne:0,expl:"L'air est un gaz."},
+{id:"sx14",matiere:"sciences",niveau:"moyen",q:"Le sucre qui « disparaît » dans l'eau s'est…",choix:["dissous","évaporé","gelé","cassé"],bonne:0,expl:"Il s'est dissous (il est toujours là)."},
+{id:"sx15",matiere:"sciences",niveau:"moyen",q:"Un mélange d'eau et d'huile est…",choix:["hétérogène","homogène","solide","gazeux"],bonne:0,expl:"On voit deux couches : c'est hétérogène."},
+{id:"sx16",matiere:"sciences",niveau:"moyen",q:"Une source d'énergie renouvelable est…",choix:["le soleil","le charbon","le pétrole","le gaz"],bonne:0,expl:"Le soleil est renouvelable."},
+{id:"sx17",matiere:"sciences",niveau:"facile",q:"Pour économiser l'électricité, il faut…",choix:["éteindre les lumières inutiles","tout laisser allumé","laisser le frigo ouvert","chauffer fenêtres ouvertes"],bonne:0,expl:"On éteint ce qui ne sert pas."},
+{id:"sx18",matiere:"sciences",niveau:"moyen",q:"On ne touche jamais une prise électrique avec les mains…",choix:["mouillées","propres","sèches","gantées"],bonne:0,expl:"L'eau conduit l'électricité : danger !"},
+{id:"sx19",matiere:"sciences",niveau:"facile",q:"La Terre est une…",choix:["planète","étoile","galaxie","comète"],bonne:0,expl:"La Terre est une planète."},
+{id:"sx20",matiere:"sciences",niveau:"facile",q:"Le Soleil est une…",choix:["étoile","planète","lune","comète"],bonne:0,expl:"Le Soleil est une étoile."},
+{id:"sx21",matiere:"sciences",niveau:"facile",q:"Le printemps, l'été, l'automne et l'hiver sont les quatre…",choix:["saisons","mois","semaines","planètes"],bonne:0,expl:"Ce sont les 4 saisons."},
+{id:"sx22",matiere:"sciences",niveau:"moyen",q:"Quand on voit la Lune toute ronde, c'est la…",choix:["pleine lune","nouvelle lune","demi-lune","éclipse"],bonne:0,expl:"La pleine lune."},
+{id:"sx23",matiere:"sciences",niveau:"facile",q:"Pour se protéger la tête à vélo, on met un…",choix:["casque","chapeau en papier","foulard","rien"],bonne:0,expl:"Un casque protège la tête."},
+{id:"sx24",matiere:"sciences",niveau:"moyen",q:"Le matériau adapté pour une vitre transparente est le…",choix:["verre","bois","métal","béton"],bonne:0,expl:"Le verre est transparent."},
+
+/* ===== EMC (+14) ===== */
+{id:"ex01",matiere:"emc",niveau:"facile",q:"Se moquer sans arrêt d'un camarade, c'est du…",choix:["harcèlement","respect","partage","jeu"],bonne:0,expl:"C'est du harcèlement : il faut en parler à un adulte."},
+{id:"ex02",matiere:"emc",niveau:"facile",q:"Filles et garçons ont…",choix:["les mêmes droits","des droits différents","pas de droits","des devoirs seulement"],bonne:0,expl:"L'égalité : les mêmes droits pour tous."},
+{id:"ex03",matiere:"emc",niveau:"facile",q:"Trier ses déchets, c'est protéger…",choix:["l'environnement","personne","les voitures","l'école seulement"],bonne:0,expl:"Le tri aide à protéger la planète."},
+{id:"ex04",matiere:"emc",niveau:"facile",q:"Pour traverser la rue, on regarde…",choix:["à gauche puis à droite","seulement en l'air","rien","les nuages"],bonne:0,expl:"On regarde des deux côtés."},
+{id:"ex05",matiere:"emc",niveau:"facile",q:"Le feu piéton pour traverser est…",choix:["vert","rouge","orange","bleu"],bonne:0,expl:"On traverse au vert (petit bonhomme vert)."},
+{id:"ex06",matiere:"emc",niveau:"facile",q:"La personne élue qui dirige la commune est le…",choix:["maire","roi","juge","général"],bonne:0,expl:"Le maire dirige la commune."},
+{id:"ex07",matiere:"emc",niveau:"moyen",q:"Respecter les autres, c'est aussi respecter leurs…",choix:["différences","erreurs seulement","jouets","cartables"],bonne:0,expl:"On respecte les différences de chacun."},
+{id:"ex08",matiere:"emc",niveau:"moyen",q:"En France, chacun peut croire ou non en une religion : c'est…",choix:["la liberté de croire ou non","une obligation de prier","une interdiction de penser","une punition"],bonne:0,expl:"C'est la liberté de conscience (laïcité)."},
+{id:"ex09",matiere:"emc",niveau:"facile",q:"Aider un camarade tombé, c'est faire preuve de…",choix:["solidarité","méchanceté","égoïsme","tricherie"],bonne:0,expl:"C'est de la solidarité."},
+{id:"ex10",matiere:"emc",niveau:"facile",q:"Dire la vérité, c'est être…",choix:["honnête","menteur","tricheur","paresseux"],bonne:0,expl:"C'est être honnête."},
+{id:"ex11",matiere:"emc",niveau:"moyen",q:"Voter se fait dans un…",choix:["bureau de vote","magasin","stade","cinéma"],bonne:0,expl:"On vote dans un bureau de vote."},
+{id:"ex12",matiere:"emc",niveau:"facile",q:"Le drapeau européen est bleu avec des étoiles…",choix:["dorées","rouges","vertes","noires"],bonne:0,expl:"Des étoiles dorées en cercle."},
+{id:"ex13",matiere:"emc",niveau:"moyen",q:"Un délégué de classe est…",choix:["élu par les élèves","choisi au hasard","le plus grand","le plus fort"],bonne:0,expl:"Il est élu par ses camarades (démocratie)."},
+{id:"ex14",matiere:"emc",niveau:"facile",q:"Prendre soin du matériel de l'école, c'est un…",choix:["devoir","droit","jeu","cadeau"],bonne:0,expl:"C'est un devoir de chacun."}
+];;;
+const FICHES = [
+/* ===== MATHS ===== */
+{id:"fm1",matiere:"maths",titre:"Les tables de multiplication",sections:[
+ {t:"Les astuces qui aident",c:"<span class='hl-ma'>× 2</span> : c'est le double. <span class='hl-ma'>× 5</span> : le résultat finit toujours par 0 ou 5. <span class='hl-ma'>× 10</span> : on ajoute un zéro.<div class='ex'>7 × 5 = 35 — 8 × 10 = 80</div>"},
+ {t:"Les plus difficiles à retenir",c:"<div class='ex'>6 × 7 = 42<br>7 × 8 = 56 (retiens « 5, 6, 7, 8 »)<br>8 × 9 = 72<br>6 × 8 = 48<br>7 × 9 = 63</div>"},
+ {t:"Bon à savoir",c:"L'ordre ne change rien : <span class='hl-ok'>7 × 8 = 8 × 7</span>. Si tu connais un sens, tu connais l'autre !"}
+]},
+{id:"fm2",matiere:"maths",titre:"Poser une addition et une soustraction",sections:[
+ {t:"L'addition posée",c:"On aligne les chiffres (unités sous unités). On calcule de <span class='hl-ma'>droite à gauche</span>. Si une colonne dépasse 9, on <span class='hl-ma'>retient 1</span> pour la colonne suivante.<div class='ex'>234 + 189 :<br>4+9 = 13 → j'écris 3, je retiens 1<br>3+8+1 = 12 → j'écris 2, je retiens 1<br>2+1+1 = 4 → <b>423</b></div>"},
+ {t:"La soustraction",c:"Même principe, de droite à gauche. Pour vérifier, on peut faire l'addition à l'envers.<div class='ex'>405 − 168 = <b>237</b> (car 237 + 168 = 405)</div>"}
+]},
+{id:"fm3",matiere:"maths",titre:"Poser une multiplication",sections:[
+ {t:"Multiplier par un chiffre",c:"On multiplie chaque chiffre du haut par le chiffre du bas, de droite à gauche, avec les retenues.<div class='ex'>47 × 6 :<br>7 × 6 = 42 → j'écris 2, je retiens 4<br>4 × 6 = 24, + 4 = 28<br>Résultat : <b>282</b></div>"},
+ {t:"Astuce × 10, × 100",c:"× 10 → un zéro de plus. × 100 → deux zéros.<div class='ex'>56 × 10 = 560 — 8 × 100 = 800</div>"}
+]},
+{id:"fm4",matiere:"maths",titre:"Les fractions simples",sections:[
+ {t:"Ce que veut dire une fraction",c:"<span class='hl-ma'>1/2</span> = la moitié. <span class='hl-ma'>1/4</span> = le quart. <span class='hl-ma'>1/3</span> = le tiers.<div class='ex'>1/2 de 10 → 10 ÷ 2 = 5<br>1/4 de 20 → 20 ÷ 4 = 5<br>1/3 de 9 → 9 ÷ 3 = 3</div>"},
+ {t:"Fraction d'une quantité",c:"« Les 3/4 de 20 » : on divise par 4, puis on multiplie par 3.<div class='ex'>20 ÷ 4 = 5, puis 5 × 3 = <b>15</b></div>"}
+]},
+{id:"fm5",matiere:"maths",titre:"Les nombres décimaux",sections:[
+ {t:"Lire un décimal",c:"Après la virgule : le 1ᵉʳ chiffre = <span class='hl-ma'>dixièmes</span>, le 2ᵉ = <span class='hl-ma'>centièmes</span>.<div class='ex'>12,05 → 0 dixième et 5 centièmes</div>"},
+ {t:"Fractions ↔ décimaux",c:"<div class='ex'>1/2 = 0,5<br>1/4 = 0,25<br>3/4 = 0,75<br>3/10 = 0,3</div>"},
+ {t:"Comparer",c:"On met le même nombre de chiffres après la virgule.<div class='ex'>0,7 = 0,70. Or 70 > 65, donc <b>0,7 > 0,65</b></div>"}
+]},
+
+/* ===== FRANÇAIS ===== */
+{id:"ff1",matiere:"francais",titre:"Les homophones",sections:[
+ {t:"a / à",c:"<span class='hl-fr'>a</span> = verbe avoir (on peut dire « avait »). <span class='hl-fr'>à</span> = petit mot de lieu/direction.<div class='ex'>Il <b>a</b> faim. — Je vais <b>à</b> l'école.</div>"},
+ {t:"et / est",c:"<span class='hl-fr'>et</span> relie (= « puis »). <span class='hl-fr'>est</span> = verbe être (= « était »).<div class='ex'>un chien <b>et</b> un chat — il <b>est</b> content</div>"},
+ {t:"on / ont · son / sont",c:"<span class='hl-fr'>ont</span> et <span class='hl-fr'>sont</span> = verbes (avaient / étaient).<div class='ex'>Ils <b>ont</b> gagné. — Ils <b>sont</b> là. — <b>On</b> joue. — <b>Son</b> ballon.</div>"},
+ {t:"ou / où",c:"<span class='hl-fr'>où</span> = le lieu. <span class='hl-fr'>ou</span> = un choix.<div class='ex'><b>Où</b> es-tu ? — thé <b>ou</b> café ?</div>"}
+]},
+{id:"ff2",matiere:"francais",titre:"Le présent des verbes",sections:[
+ {t:"Verbes en -er",c:"je -e, tu -es, il -e, nous -ons, vous -ez, ils -ent.<div class='ex'>jouer → je joue, nous jouons, ils jouent</div>"},
+ {t:"Verbes utiles à connaître",c:"<div class='ex'>être → je suis, il est, ils sont<br>avoir → j'ai, il a, ils ont<br>aller → je vais, tu vas, il va<br>faire → nous faisons, vous faites</div>"},
+ {t:"Petit piège",c:"À la 3ᵉ personne, beaucoup de verbes prennent un <span class='hl-fr'>t</span> : il vien<b>t</b>, il pren<b>d</b>, il fai<b>t</b>."}
+]},
+{id:"ff3",matiere:"francais",titre:"Le pluriel des noms",sections:[
+ {t:"La règle générale",c:"On ajoute un <span class='hl-fr'>s</span>.<div class='ex'>un ballon → des ballon<b>s</b></div>"},
+ {t:"Les cas particuliers",c:"En <span class='hl-fr'>-eau</span> et <span class='hl-fr'>-eu</span> → x (tableau → tableaux, jeu → jeux). En <span class='hl-fr'>-al</span> → -aux (cheval → chevaux).<div class='ex'>Déjà en s, x ou z : ça ne change pas. une souris → des souris</div>"}
+]},
+{id:"ff4",matiere:"francais",titre:"La nature des mots",sections:[
+ {t:"Les principales",c:"<span class='hl-fr'>nom</span> (maison), <span class='hl-fr'>verbe</span> (courir), <span class='hl-fr'>adjectif</span> (rouge), <span class='hl-fr'>adverbe</span> (vite), <span class='hl-fr'>déterminant</span> (le, un, mon), <span class='hl-fr'>pronom</span> (il, elle, je)."},
+ {t:"Comment reconnaître",c:"Le <b>nom</b> a souvent un petit mot devant (le, un…). Le <b>verbe</b> se conjugue (hier, aujourd'hui…). L'<b>adjectif</b> décrit un nom.<div class='ex'>Le (dét.) grand (adj.) joueur (nom) court (verbe) vite (adv.).</div>"}
+]},
+{id:"ff5",matiere:"francais",titre:"Les types de phrases",sections:[
+ {t:"Les 4 types",c:"<span class='hl-fr'>déclarative</span> : on raconte (.). <span class='hl-fr'>interrogative</span> : on demande (?). <span class='hl-fr'>exclamative</span> : on s'exclame (!). <span class='hl-fr'>impérative</span> : on donne un ordre.<div class='ex'>Il joue. — Tu viens ? — Quel but ! — Passe le ballon.</div>"},
+ {t:"La ponctuation",c:"<b>.</b> fin de phrase — <b>?</b> question — <b>!</b> exclamation — <b>,</b> petite pause."}
+]},
+
+/* ===== ANGLAIS ===== */
+{id:"fa1",matiere:"anglais",titre:"To be (am / is / are)",sections:[
+ {t:"Les 3 formes",c:"<span class='hl-an'>I am</span> — <span class='hl-an'>he/she/it is</span> — <span class='hl-an'>you/we/they are</span>.<div class='ex'>I am Ace. — She is happy. — They are friends.</div>"},
+ {t:"Avec l'âge",c:"En anglais on <b>est</b> âgé (pas « on a »).<div class='ex'>I <b>am</b> ten years old. (= j'ai 10 ans)</div>"}
+]},
+{id:"fa2",matiere:"anglais",titre:"Les nombres et les couleurs",sections:[
+ {t:"Nombres 1 à 10",c:"<div class='ex'>one, two, three, four, five, six, seven, eight, nine, ten</div>"},
+ {t:"Couleurs",c:"<span class='hl-an'>red</span> (rouge), <span class='hl-an'>blue</span> (bleu), <span class='hl-an'>green</span> (vert), <span class='hl-an'>yellow</span> (jaune), <span class='hl-an'>black</span> (noir), <span class='hl-an'>white</span> (blanc)."}
+]},
+{id:"fa3",matiere:"anglais",titre:"Les jours de la semaine",sections:[
+ {t:"Les 7 jours",c:"<div class='ex'>Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday</div>"},
+ {t:"À retenir",c:"En anglais, les jours prennent toujours une <span class='hl-an'>majuscule</span>."}
+]},
+{id:"fa4",matiere:"anglais",titre:"Se présenter",sections:[
+ {t:"Les questions clés",c:"<span class='hl-an'>What is your name ?</span> (ton nom) — <span class='hl-an'>How are you ?</span> (ça va) — <span class='hl-an'>How old are you ?</span> (ton âge)."},
+ {t:"Les réponses",c:"<div class='ex'>My name is Ace.<br>I am fine, thank you.<br>I am 11 years old.</div>"}
+]},
+{id:"fa5",matiere:"anglais",titre:"Vocabulaire de base + a / an",sections:[
+ {t:"a ou an ?",c:"<span class='hl-an'>a</span> devant une consonne, <span class='hl-an'>an</span> devant un son voyelle (a, e, i, o, u).<div class='ex'>a dog — a book — an apple — an orange</div>"},
+ {t:"Petits mots utiles",c:"<span class='hl-an'>yes</span> (oui) / <span class='hl-an'>no</span> (non), <span class='hl-an'>hello</span> (bonjour), <span class='hl-an'>goodbye</span> (au revoir), <span class='hl-an'>please</span> (s'il te plaît), <span class='hl-an'>thank you</span> (merci)."}
+]},
+/* ===== MATHS : LA GRANDE FICHE DIVISIONS ===== */
+{id:"fm6",matiere:"maths",titre:"Les divisions (fiche complète)",sections:[
+ {t:"1. Diviser, ça veut dire quoi ?",c:"Diviser, c'est <span class='hl-ma'>partager en parts égales</span>, ou chercher <span class='hl-ma'>combien de fois</span> un nombre tient dans un autre.<div class='fig'><svg viewBox='0 0 300 110'><g><rect x='6' y='20' width='86' height='70' rx='10' fill='#DCEAF6' stroke='#164a86'/><rect x='107' y='20' width='86' height='70' rx='10' fill='#DCEAF6' stroke='#164a86'/><rect x='208' y='20' width='86' height='70' rx='10' fill='#DCEAF6' stroke='#164a86'/><g fill='#2F6DB0'><circle cx='30' cy='42' r='7'/><circle cx='68' cy='42' r='7'/><circle cx='30' cy='70' r='7'/><circle cx='68' cy='70' r='7'/><circle cx='131' cy='42' r='7'/><circle cx='169' cy='42' r='7'/><circle cx='131' cy='70' r='7'/><circle cx='169' cy='70' r='7'/><circle cx='232' cy='42' r='7'/><circle cx='270' cy='42' r='7'/><circle cx='232' cy='70' r='7'/><circle cx='270' cy='70' r='7'/></g></g></svg></div>12 billes partagées en 3 boîtes → <b>12 ÷ 3 = 4</b> billes par boîte."},
+ {t:"2. Le vocabulaire",c:"Dans <b>96 ÷ 4 = 24</b> : <span class='hl-ma'>96</span> est le <b>dividende</b> (ce qu'on partage), <span class='hl-ma'>4</span> le <b>diviseur</b> (en combien de parts), <span class='hl-ok'>24</span> le <b>quotient</b> (le résultat). Ce qui reste s'appelle le <b>reste</b>."},
+ {t:"3. La division posée (la potence)",c:"On divise chiffre par chiffre, de <span class='hl-ma'>gauche à droite</span>.<div class='fig'><svg viewBox='0 0 210 150'><line x1='108' y1='10' x2='108' y2='135' stroke='#164a86' stroke-width='2'/><line x1='108' y1='40' x2='190' y2='40' stroke='#164a86' stroke-width='2'/><text x='96' y='30' text-anchor='end' font-size='17' fill='#24262C'>96</text><text x='150' y='30' text-anchor='middle' font-size='17' fill='#164a86'>4</text><text x='150' y='64' text-anchor='middle' font-size='17' fill='#2E8B57'>24</text><text x='96' y='58' text-anchor='end' font-size='15' fill='#A5243D'>−8</text><line x1='60' y1='66' x2='100' y2='66' stroke='#7c7566'/><text x='96' y='84' text-anchor='end' font-size='15' fill='#24262C'>16</text><text x='96' y='106' text-anchor='end' font-size='15' fill='#A5243D'>−16</text><line x1='55' y1='114' x2='100' y2='114' stroke='#7c7566'/><text x='96' y='132' text-anchor='end' font-size='15' fill='#24262C'>0</text></svg></div><div class='calc'><div class='cl'>Dans 9, combien de fois 4 ? → 2 <span class='cw'>2 × 4 = 8</span></div><div class='cl'>9 − 8 = 1, j'abaisse le 6 → 16 <span class='cw'>on descend le chiffre suivant</span></div><div class='cl'>Dans 16, combien de fois 4 ? → 4 <span class='cw'>4 × 4 = 16</span></div><div class='cl'>16 − 16 = 0 → <b>quotient 24, reste 0</b></div></div>"},
+ {t:"4. Une division avec un reste",c:"<div class='calc'><div class='cl'>74 ÷ 5 <span class='cw'>on partage 74 en 5</span></div><div class='cl'>Dans 7, combien de fois 5 ? → 1 (5), reste 2</div><div class='cl'>j'abaisse le 4 → 24 ; dans 24, combien de fois 5 ? → 4 (20)</div><div class='cl'>24 − 20 = 4 → <b>74 = 5 × 14 + 4</b> (quotient 14, reste 4)</div></div>Le <span class='hl-ma'>reste est toujours plus petit que le diviseur</span>."},
+ {t:"5. La division euclidienne",c:"On peut toujours écrire : <span class='hl-ma'>dividende = diviseur × quotient + reste</span>.<div class='ex'>74 = 5 × 14 + 4 ✔</div>C'est aussi la façon de <b>vérifier</b> sa division !"},
+ {t:"6. Diviser par 10, par 100",c:"On <span class='hl-ma'>décale la virgule</span> vers la gauche.<div class='calc'><div class='cl'>320 ÷ 10 = 32</div><div class='cl'>320 ÷ 100 = 3,2</div><div class='cl'>45 ÷ 10 = 4,5</div></div>"},
+ {t:"7. L'astuce : penser aux tables",c:"Une division, c'est une multiplication à l'envers.<div class='ex'>56 ÷ 7 = ? → « 7 × combien = 56 ? » → 8. Donc 56 ÷ 7 = <b>8</b>.</div>Bien connaître ses tables rend les divisions faciles."}
+]},
+
+/* ===== HISTOIRE-GÉO (6) ===== */
+{id:"hg1",matiere:"histoire",titre:"Les grandes périodes de l'histoire",sections:[
+ {t:"La frise du temps",c:"On classe le temps en grandes périodes.<div class='fig'><svg viewBox='0 0 320 100'><rect x='10' y='35' width='86' height='28' fill='#e5cfa9' stroke='#7d5320'/><rect x='96' y='35' width='52' height='28' fill='#d8b98a' stroke='#7d5320'/><rect x='148' y='35' width='52' height='28' fill='#e5cfa9' stroke='#7d5320'/><rect x='200' y='35' width='46' height='28' fill='#d8b98a' stroke='#7d5320'/><rect x='246' y='35' width='64' height='28' fill='#B5793C' stroke='#7d5320'/><g font-size='8' fill='#5b3f18' text-anchor='middle'><text x='53' y='78'>Préhistoire</text><text x='122' y='78'>Antiquité</text><text x='174' y='78'>Moyen Âge</text><text x='223' y='78'>Temps mod.</text><text x='278' y='78'>Aujourd.</text></g></svg></div>"},
+ {t:"À retenir",c:"L'<span class='hl-hg'>écriture</span> marque le début de l'Histoire. Avant, c'est la <b>Préhistoire</b> (les premiers hommes)."}
+]},
+{id:"hg2",matiere:"histoire",titre:"L'Antiquité : Gaulois et Romains",sections:[
+ {t:"Nos ancêtres",c:"En Gaule vivaient les <span class='hl-hg'>Gaulois</span>. Les <span class='hl-hg'>Romains</span>, venus d'Italie, ont conquis la Gaule et apporté leurs villes, leurs routes et leur langue (le latin)."},
+ {t:"À retenir",c:"Le latin est l'ancêtre du français. Les Romains ont construit des <b>aqueducs</b>, des <b>arènes</b> et des routes pavées."}
+]},
+{id:"hg3",matiere:"histoire",titre:"Le Moyen Âge",sections:[
+ {t:"Le château fort",c:"Au Moyen Âge, les seigneurs vivaient dans des <span class='hl-hg'>châteaux forts</span> pour se protéger.<div class='fig'><svg viewBox='0 0 220 130'><rect x='40' y='55' width='140' height='60' fill='#d8b98a' stroke='#7d5320'/><g fill='#d8b98a' stroke='#7d5320'><rect x='40' y='40' width='16' height='16'/><rect x='72' y='40' width='16' height='16'/><rect x='104' y='40' width='16' height='16'/><rect x='136' y='40' width='16' height='16'/><rect x='164' y='40' width='16' height='16'/></g><rect x='30' y='30' width='26' height='85' fill='#c9a978' stroke='#7d5320'/><rect x='164' y='30' width='26' height='85' fill='#c9a978' stroke='#7d5320'/><rect x='96' y='78' width='28' height='37' fill='#5b3f18'/></svg></div>"},
+ {t:"À retenir",c:"On y trouvait des <span class='hl-hg'>chevaliers</span>, des remparts, un pont-levis et des douves (l'eau autour)."}
+]},
+{id:"hg4",matiere:"histoire",titre:"Continents et océans",sections:[
+ {t:"Se repérer sur la Terre",c:"Il y a <span class='hl-hg'>6 continents</span> et <span class='hl-hg'>5 océans</span>.<div class='fig'><svg viewBox='0 0 320 160'><rect x='0' y='0' width='320' height='160' fill='#cfe0ef'/><path d='M40 40 Q70 30 72 68 Q58 95 44 90 Q26 66 40 40 Z' fill='#B5793C'/><path d='M66 100 Q90 96 86 134 Q72 152 62 144 Q52 116 66 100 Z' fill='#B5793C'/><path d='M150 45 Q172 42 172 64 Q162 78 150 74 Q140 60 150 45 Z' fill='#d8b98a'/><path d='M150 82 Q178 82 176 126 Q160 150 146 136 Q136 104 150 82 Z' fill='#B5793C'/><path d='M215 45 Q285 36 288 78 Q268 106 230 92 Q206 74 215 45 Z' fill='#d8b98a'/><ellipse cx='285' cy='128' rx='16' ry='9' fill='#B5793C'/><g font-size='8' fill='#5b3f18'><text x='36' y='66'>Amériques</text><text x='150' y='64'>Europe</text><text x='150' y='118'>Afrique</text><text x='240' y='72'>Asie</text></g></svg></div>"}
+]},
+{id:"hg5",matiere:"histoire",titre:"La France",sections:[
+ {t:"L'Hexagone et ses fleuves",c:"La France a la forme d'un <span class='hl-hg'>hexagone</span>. Ses grands fleuves : la Seine, la Loire, la Garonne, le Rhône.<div class='fig'><svg viewBox='0 0 200 200'><polygon points='100,15 175,60 165,150 100,185 35,150 25,60' fill='#F2E7D6' stroke='#7d5320' stroke-width='2'/><path d='M100 85 Q90 65 72 52' fill='none' stroke='#2F6DB0' stroke-width='2'/><path d='M60 118 Q100 105 150 112' fill='none' stroke='#2F6DB0' stroke-width='2'/><path d='M140 92 Q150 130 150 162' fill='none' stroke='#2F6DB0' stroke-width='2'/><circle cx='100' cy='88' r='3.5' fill='#A5243D'/><text x='106' y='86' font-size='9' fill='#5b3f18'>Paris</text></svg></div>"},
+ {t:"À retenir",c:"La capitale est <span class='hl-hg'>Paris</span>, traversée par la Seine. La France est en Europe."}
+]},
+{id:"hg6",matiere:"histoire",titre:"Les points cardinaux",sections:[
+ {t:"La rose des vents",c:"Pour se repérer : <span class='hl-hg'>Nord</span>, <span class='hl-hg'>Sud</span>, <span class='hl-hg'>Est</span>, <span class='hl-hg'>Ouest</span>. Sur une carte, le Nord est en haut.<div class='fig'><svg viewBox='0 0 160 160'><circle cx='80' cy='80' r='60' fill='#F2E7D6' stroke='#7d5320'/><polygon points='80,20 88,80 72,80' fill='#A5243D'/><polygon points='80,140 88,80 72,80' fill='#7d5320'/><polygon points='20,80 80,72 80,88' fill='#7d5320'/><polygon points='140,80 80,72 80,88' fill='#7d5320'/><g font-size='13' fill='#5b3f18' text-anchor='middle'><text x='80' y='16'>N</text><text x='80' y='154'>S</text><text x='10' y='85'>O</text><text x='150' y='85'>E</text></g></svg></div>"}
+]},
+
+/* ===== SCIENCES (6) ===== */
+{id:"sc1",matiere:"sciences",titre:"Le vivant et ses besoins",sections:[
+ {t:"Vivant ou non ?",c:"Un être <span class='hl-sc'>vivant</span> naît, grandit, se nourrit, se reproduit et meurt (un animal, une plante). Une pierre ou un vélo sont <b>non vivants</b>."},
+ {t:"Les besoins",c:"Pour vivre, les animaux ont besoin de <span class='hl-sc'>nourriture</span>, d'<span class='hl-sc'>eau</span>, d'<span class='hl-sc'>air</span> et d'un abri. Les plantes ont besoin d'eau, de lumière et d'air."}
+]},
+{id:"sc2",matiere:"sciences",titre:"Le squelette et les muscles",sections:[
+ {t:"Pour tenir et bouger",c:"Le <span class='hl-sc'>squelette</span> (les os) soutient le corps et le protège. Les <span class='hl-sc'>muscles</span>, attachés aux os, se contractent pour faire bouger les articulations."},
+ {t:"À retenir",c:"Le crâne protège le <b>cerveau</b>, les côtes protègent le <b>cœur</b> et les <b>poumons</b>."}
+]},
+{id:"sc3",matiere:"sciences",titre:"Les états de l'eau",sections:[
+ {t:"Solide, liquide, gaz",c:"L'eau peut être <span class='hl-sc'>solide</span> (glace), <span class='hl-sc'>liquide</span> ou <span class='hl-sc'>gazeuse</span> (vapeur).<div class='fig'><svg viewBox='0 0 300 120'><rect x='12' y='20' width='80' height='80' rx='8' fill='#E9E2F7' stroke='#4a3488'/><rect x='30' y='45' width='44' height='30' fill='#7A5AC2'/><text x='52' y='114' text-anchor='middle' font-size='11' fill='#4a3488'>glace</text><rect x='110' y='20' width='80' height='80' rx='8' fill='#E9E2F7' stroke='#4a3488'/><path d='M124 60 Q150 50 176 60 L176 90 L124 90 Z' fill='#7A5AC2'/><text x='150' y='114' text-anchor='middle' font-size='11' fill='#4a3488'>eau</text><rect x='208' y='20' width='80' height='80' rx='8' fill='#E9E2F7' stroke='#4a3488'/><g fill='#7A5AC2'><circle cx='230' cy='45' r='5'/><circle cx='262' cy='40' r='5'/><circle cx='248' cy='66' r='5'/><circle cx='272' cy='72' r='5'/></g><text x='248' y='114' text-anchor='middle' font-size='11' fill='#4a3488'>vapeur</text></svg></div>"},
+ {t:"Les changements",c:"La glace <span class='hl-sc'>fond</span> (fusion) à 0 °C ; l'eau <span class='hl-sc'>s'évapore</span> quand on la chauffe (elle bout à 100 °C)."}
+]},
+{id:"sc4",matiere:"sciences",titre:"Le circuit électrique",sections:[
+ {t:"Une boucle fermée",c:"Pour allumer une lampe, il faut une <span class='hl-sc'>pile</span>, des fils et une boucle <span class='hl-sc'>fermée</span>.<div class='fig'><svg viewBox='0 0 260 130'><g stroke='#4a3488' stroke-width='2.5' fill='none' stroke-linecap='round'><polyline points='40,25 112,25'/><polyline points='148,25 220,25'/><polyline points='220,25 220,105 40,105 40,25'/></g><circle cx='130' cy='25' r='15' fill='#E9E2F7' stroke='#4a3488' stroke-width='2.5'/><line x1='120' y1='15' x2='140' y2='35' stroke='#A5243D' stroke-width='2'/><line x1='140' y1='15' x2='120' y2='35' stroke='#A5243D' stroke-width='2'/><line x1='24' y1='55' x2='56' y2='55' stroke='#4a3488' stroke-width='2'/><line x1='32' y1='68' x2='48' y2='68' stroke='#4a3488' stroke-width='5'/><text x='40' y='95' text-anchor='middle' font-size='10' fill='#4a3488'>pile</text><text x='130' y='60' text-anchor='middle' font-size='10' fill='#4a3488'>lampe</text></svg></div>"},
+ {t:"À retenir",c:"Si on ouvre l'interrupteur (on coupe la boucle), la lampe <b>s'éteint</b>."}
+]},
+{id:"sc5",matiere:"sciences",titre:"La Terre, le Soleil et la Lune",sections:[
+ {t:"Le jour et la nuit",c:"La Terre <span class='hl-sc'>tourne sur elle-même</span> en 24 h : le côté éclairé par le Soleil est en <b>jour</b>, l'autre en <b>nuit</b>.<div class='fig'><svg viewBox='0 0 300 130'><circle cx='40' cy='65' r='22' fill='#E9B84A' stroke='#4a3488'/><g stroke='#E9B84A' stroke-width='2'><line x1='68' y1='65' x2='110' y2='65'/><line x1='62' y1='46' x2='100' y2='34'/><line x1='62' y1='84' x2='100' y2='96'/></g><circle cx='180' cy='65' r='32' fill='#1c2b52'/><path d='M180 33 A32 32 0 0 0 180 97 Z' fill='#E9B84A'/><circle cx='180' cy='65' r='32' fill='none' stroke='#4a3488'/><text x='160' y='69' text-anchor='middle' font-size='10' fill='#4a3488'>jour</text><text x='202' y='69' text-anchor='middle' font-size='10' fill='#fff'>nuit</text><circle cx='265' cy='38' r='10' fill='#E9E2F7' stroke='#4a3488'/></svg></div>"},
+ {t:"À retenir",c:"La Terre tourne autour du <span class='hl-sc'>Soleil</span> en 1 an (les saisons). La Lune tourne autour de la Terre."}
+]},
+{id:"sc6",matiere:"sciences",titre:"Objets techniques et matériaux",sections:[
+ {t:"À quoi ça sert ?",c:"Un objet technique est fabriqué par l'homme pour répondre à un <span class='hl-sc'>besoin</span> (un vélo sert à se déplacer)."},
+ {t:"Les matériaux",c:"On choisit le <span class='hl-sc'>matériau</span> selon l'usage : le <b>bois</b>, le <b>métal</b>, le <b>plastique</b>, le <b>verre</b>. Chacun a ses qualités (solide, léger, transparent…)."}
+]},
+
+/* ===== EMC (4) ===== */
+{id:"em1",matiere:"emc",titre:"Les symboles de la République",sections:[
+ {t:"Reconnaître la République française",c:"Le <span class='hl-em'>drapeau</span> bleu-blanc-rouge, la <span class='hl-em'>Marianne</span>, la devise <span class='hl-em'>« Liberté, Égalité, Fraternité »</span> et l'hymne <span class='hl-em'>« La Marseillaise »</span>.<div class='fig'><svg viewBox='0 0 210 130'><rect x='30' y='25' width='50' height='90' fill='#20409a'/><rect x='80' y='25' width='50' height='90' fill='#ffffff' stroke='#e6dcc8'/><rect x='130' y='25' width='50' height='90' fill='#c8102e'/></svg></div>"},
+ {t:"À retenir",c:"La fête nationale est le <span class='hl-em'>14 juillet</span>. La devise résume les valeurs de la France."}
+]},
+{id:"em2",matiere:"emc",titre:"La règle et la loi",sections:[
+ {t:"Vivre ensemble",c:"À l'école comme dans la société, des <span class='hl-em'>règles</span> permettent de vivre ensemble en sécurité et dans le respect."},
+ {t:"À retenir",c:"La <span class='hl-em'>loi</span> est la même pour tous. La respecter protège chacun. Le règlement de l'école est une sorte de loi de la classe."}
+]},
+{id:"em3",matiere:"emc",titre:"Les droits et les devoirs de l'enfant",sections:[
+ {t:"Des droits",c:"Chaque enfant a le droit d'être <span class='hl-em'>protégé</span>, d'aller à l'<span class='hl-em'>école</span>, de <span class='hl-em'>jouer</span> et d'être soigné."},
+ {t:"Des devoirs",c:"On a aussi des devoirs : <span class='hl-em'>respecter</span> les autres, être <b>poli</b>, ne pas être violent, prendre soin du matériel."}
+]},
+{id:"em4",matiere:"emc",titre:"Voter et la démocratie",sections:[
+ {t:"Choisir ensemble",c:"En <span class='hl-em'>démocratie</span>, les citoyens <span class='hl-em'>votent</span> pour choisir leurs représentants (le maire, le président)."},
+ {t:"À retenir",c:"Voter, c'est donner son avis. On respecte le <b>résultat</b> même si notre choix n'a pas gagné : c'est la règle de la majorité."}
+]}
+];;
+
+/* ================= CONFIG PROGRAMME ================= */
+const START = new Date(2026, 7, 3);   // 3 août 2026
+const END   = new Date(2026, 7, 31);  // 31 août 2026
+const NB_JOURS = 29;                  // 3 -> 31 août
+
+const MAT = {
+  francais:{cls:"fr", nom:"Français", ic:"✏️"},
+  maths:{cls:"ma", nom:"Maths", ic:"➗"},
+  anglais:{cls:"an", nom:"Anglais", ic:"🌍"},
+  histoire:{cls:"hg", nom:"Histoire-Géo", ic:"🗺️"},
+  sciences:{cls:"sc", nom:"Sciences", ic:"🔬"},
+  emc:{cls:"em", nom:"EMC", ic:"⚖️"}
+};
+
+const ENC_OK = ["But, ACE ! ⚽","Quel joueur, bravo ! 💪","En pleine lucarne 🎯","Superbe, tu marques encore !","Titulaire sans discuter 👏","Passe décisive, continue ! 🌟"];
+const ENC_NO = ["Pas de souci ACE, on se replace 💪","Presque ! Regarde l'explication juste en dessous.","Ce n'est pas grave, on garde la tête haute.","Erreur utile : la prochaine sera la bonne ⚽","Allez ACE, on revient plus fort ! 🔥"];
+
+/* ================= STOCKAGE ================= */
+const KEY = "ace_v1";
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
+function save(s){ try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){} }
+let STATE = load();
+STATE.notes  = STATE.notes  || {};   // "YYYY-MM-DD": {note,pct,correct,total} (1er score gardé)
+STATE.fiches = STATE.fiches || {};   // id: true
+STATE.dictees = STATE.dictees || {};  // semaine: {fautes}
+STATE.review = STATE.review || {};   // idQuestion: {due:dayIndex, streak}
+STATE.scale  = STATE.scale  || 1;
+
+/* ================= DATES ================= */
+function ymd(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function dayFromIndex(i){ const d=new Date(START); d.setDate(START.getDate()+i); return d; }
+function midnight(d){ return new Date(d.getFullYear(),d.getMonth(),d.getDate()); }
+function todayIndex(){
+  const t=midnight(new Date());
+  const diff=Math.round((t-START)/86400000);
+  return diff; // <0 avant le 3 août, >28 après le 31
+}
+const JOURS_FR=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+const MOIS_FR=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+function dateLisible(d){ return JOURS_FR[d.getDay()]+" "+d.getDate()+" "+MOIS_FR[d.getMonth()]; }
+
+/* ================= PRNG déterministe (par jour) ================= */
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function shuffle(arr, rnd){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function hashStr(s){ let h=0; for(let k=0;k<s.length;k++){ h=(h*31+s.charCodeAt(k))|0; } return h>>>0; }
+function melangeChoix(q, i){
+  const rnd=mulberry32((20260803 + i*97 + hashStr(q.id))>>>0);
+  const idx=q.choix.map((_,k)=>k);
+  for(let k=idx.length-1;k>0;k--){ const j=Math.floor(rnd()*(k+1)); [idx[k],idx[j]]=[idx[j],idx[k]]; }
+  return Object.assign({}, q, { choix: idx.map(k=>q.choix[k]), bonne: idx.indexOf(q.bonne) });
+}
+function parlerFr(txt){ try{ if(!('speechSynthesis' in window)) return; const u=new SpeechSynthesisUtterance(txt); u.lang="fr-FR"; u.rate=0.85; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); }catch(e){} }
+
+/* ================= PLAN DU JOUR ================= */
+function semaine(i){ return i<7?1 : i<14?2 : i<21?3 : 4; }
+function nbQuestions(i){ const s=semaine(i); return s===1?20 : s===2?25 : 30; }
+
+// répartition des niveaux par semaine ; plus on avance, plus de questions difficiles
+function poidsNiveaux(i){
+  const s=semaine(i);
+  if(s===1) return {facile:0.80, moyen:0.20, difficile:0};
+  if(s===2) return {facile:0.55, moyen:0.35, difficile:0.10};
+  if(s===3) return {facile:0.35, moyen:0.45, difficile:0.20};
+  const k=Math.min(i-21,7);
+  const difficile=0.25+0.025*k;
+  return {facile:0.15, moyen:1-0.15-difficile, difficile:difficile};
+}
+
+function repartitionMatieres(n, i){
+  const ma=Math.round(n*0.5), fr=Math.round(n*0.4), an=n-ma-fr;
+  let hi=0, sc=0, em=0;
+  if(semaine(i)>=2){ hi=5; sc=5; em=3; }   // AJOUTÉES en plus dès la semaine 2
+  return {francais:fr, maths:ma, anglais:an, histoire:hi, sciences:sc, emc:em};
+}
+function totalQuestions(i){ const r=repartitionMatieres(nbQuestions(i), i); return Object.values(r).reduce((a,b)=>a+b,0); }
+
+// répartit "count" questions d'une matière selon les poids de niveaux
+function tirerMatiere(matiere, count, poids, rnd, dejaPris){
+  const res=[];
+  const parNiveau={
+    facile:Math.round(count*poids.facile),
+    moyen:Math.round(count*poids.moyen),
+    difficile:count
+  };
+  parNiveau.difficile=Math.max(0,count-parNiveau.facile-parNiveau.moyen);
+  const ordre=["facile","moyen","difficile"];
+  for(const niv of ordre){
+    let besoin=parNiveau[niv];
+    if(besoin<=0) continue;
+    let pool=BANQUE.filter(q=>q.matiere===matiere && q.niveau===niv && !dejaPris.has(q.id));
+    pool=shuffle(pool, rnd);
+    for(let k=0;k<pool.length && besoin>0;k++){ res.push(pool[k]); dejaPris.add(pool[k].id); besoin--; }
+  }
+  // complément si manque (on pioche dans la matière, tout niveau)
+  if(res.length<count){
+    let pool=shuffle(BANQUE.filter(q=>q.matiere===matiere && !dejaPris.has(q.id)), rnd);
+    for(let k=0;k<pool.length && res.length<count;k++){ res.push(pool[k]); dejaPris.add(pool[k].id); }
+  }
+  return res;
+}
+
+function planDuJour(i){
+  const rnd=mulberry32(20260803+i*97);
+  const n=nbQuestions(i);
+  const rep=repartitionMatieres(n,i);
+  const totalQ=Object.values(rep).reduce((a,b)=>a+b,0);
+  const poids=poidsNiveaux(i);
+  const dejaPris=new Set();
+  let liste=[];
+
+  // 1) questions de révision dues (erreurs passées + notions importantes)
+  const dues=Object.keys(STATE.review).filter(id=>STATE.review[id].due<=i && BANQUE.some(q=>q.id===id));
+  const maxRev=Math.floor(totalQ*0.25);
+  const revShuf=shuffle(dues, rnd).slice(0,maxRev);
+  for(const id of revShuf){ const q=BANQUE.find(x=>x.id===id); if(q){ liste.push(q); dejaPris.add(id); } }
+
+  // 2) on complète chaque matière (en retirant ce que la révision a déjà mis)
+  const compteRev={francais:0,maths:0,anglais:0,histoire:0,sciences:0,emc:0};
+  liste.forEach(q=>compteRev[q.matiere]++);
+  for(const m of ["francais","maths","anglais","histoire","sciences","emc"]){
+    const reste=Math.max(0, rep[m]-compteRev[m]);
+    if(reste>0) liste=liste.concat(tirerMatiere(m, reste, poids, rnd, dejaPris));
+  }
+  // 3) mélange final stable
+  liste=shuffle(liste, rnd).slice(0,totalQ);
+  liste=liste.map(q=>melangeChoix(q, i));
+  return liste;
+}
+
+/* ================= MISE À JOUR RÉVISION ================= */
+function majRevision(q, correct, i){
+  const r=STATE.review;
+  if(!correct){
+    r[q.id]={due:i+1, streak:0}; // à revoir dès demain
+  } else {
+    if(r[q.id]){ // était en révision : on espace
+      const st=(r[q.id].streak||0)+1;
+      if(st>=3){ delete r[q.id]; }
+      else { r[q.id]={due:i+[0,2,4][st], streak:st}; }
+    } else if(q.important){ // notion importante : on la repose même si juste
+      r[q.id]={due:i+2, streak:1};
+    }
+  }
+}
+
+/* ================= STATUT D'UN JOUR ================= */
+function statutJour(i){
+  const key=ymd(dayFromIndex(i));
+  const ti=todayIndex();
+  if(STATE.notes[key]) return "done";
+  if(i>ti) return "lock";
+  if(i===ti) return "todo";
+  return "late"; // passé non fait
+}
+
+/* ================= RENDU DES ONGLETS ================= */
+function fichesNonLues(){ return FICHES.filter(f=>!STATE.fiches[f.id]); }
+
+function renderAccueil(){
+  const el=document.getElementById("sec-accueil");
+  const ti=todayIndex();
+  let html="";
+
+  if(ti<0){
+    html+=`<div class="card"><div class="lbl">Ça commence bientôt</div>
+      <div class="big">Le programme démarre le <b>3 août</b> 🌞</div>
+      <p class="mini">En attendant, tu peux essayer un mini-exemple pour découvrir, ou lire tes fiches.</p>
+      <button class="btn btn-fr" id="demoBtn">Essayer un exemple (3 questions)</button></div>`;
+  } else if(ti>28){
+    html+=`<div class="card"><div class="lbl">Programme terminé</div>
+      <div class="big">Bravo ACE, tu as fait tout le mois d'août ! 🏆⚽</div>
+      <p class="mini">Regarde ton suivi pour voir tout ton parcours.</p></div>`;
+  } else {
+    const key=ymd(dayFromIndex(ti));
+    if(STATE.notes[key]){
+      const nd=STATE.notes[key];
+      html+=`<div class="card"><div class="lbl">Mission du jour</div>
+        <div class="big">✅ Match joué, bravo ! ⚽</div>
+        <p class="mini">Ta note du jour : <b>${nd.note.toFixed(1)}/20</b> (${nd.pct}% de bonnes réponses).</p>
+        <button class="btn btn-ghost" id="startBtn">Refaire pour t'entraîner (ne compte pas)</button></div>`;
+    } else {
+      const n=totalQuestions(ti);
+      let chips=`<span class="chip ma">➗ Maths</span><span class="chip fr">✏️ Français</span><span class="chip an">🌍 Anglais</span>`;
+      if(semaine(ti)>=2){ chips+=`<span class="chip hg">🗺️ Hist-Géo</span><span class="chip sc">🔬 Sciences</span><span class="chip em">⚖️ EMC</span>`; }
+      html+=`<div class="card"><div class="lbl">Ta feuille de match</div>
+        <div class="big">Match du jour · <b>${n} questions</b> · ~${semaine(ti)>=2?8:5} min</div>
+        <div class="chips">${chips}</div>
+        <button class="btn btn-fr" id="startBtn">Commencer ▸</button></div>`;
+    }
+    // rattrapage
+    const late=[];
+    for(let k=0;k<ti;k++){ if(statutJour(k)==="late") late.push(k); }
+    if(late.length){
+      html+=`<div class="card"><div class="lbl">À rattraper</div>
+        <div class="mini">Il te reste <b>${late.length}</b> jour(s) non fait(s). Va dans l'onglet <b>Test</b> pour les rattraper 🙂</div></div>`;
+    }
+  }
+
+  // fiches à lire
+  const nl=fichesNonLues();
+  html+=`<div class="card"><div class="lbl">Fiches à lire</div>`;
+  if(nl.length===0){ html+=`<div class="mini">Toutes tes fiches sont lues, chapeau ! ⚽</div>`; }
+  else{
+    html+=`<div class="mini" style="margin-bottom:10px">${nl.length} fiche(s) t'attendent :</div>`;
+    nl.slice(0,4).forEach(f=>{
+      html+=`<div class="fichelink" data-fiche="${f.id}"><span class="dot ${MAT[f.matiere].cls}"></span><span>${f.titre}</span><span class="go">lire ▸</span></div>`;
+    });
+  }
+  html+=`</div>`;
+
+  el.innerHTML=html;
+  const sb=document.getElementById("startBtn"); if(sb) sb.onclick=()=>lancerQCM(ti);
+  const db=document.getElementById("demoBtn"); if(db) db.onclick=lancerDemo;
+  el.querySelectorAll("[data-fiche]").forEach(x=>x.onclick=()=>ouvrirFiche(x.dataset.fiche));
+}
+
+function renderTest(){
+  const el=document.getElementById("sec-test");
+  let html=`<h2>Ton calendrier d'août</h2><p class="mini" style="margin-bottom:14px">Appuie sur un jour à faire ou à rattraper pour lancer ton QCM.</p>`;
+  html+=`<div class="cal">`;
+  ["L","M","M","J","V","S","D"].forEach(h=>html+=`<div class="h">${h}</div>`);
+  // 3 août 2026 = lundi -> décalage 0
+  const firstDow=(dayFromIndex(0).getDay()+6)%7; // lundi=0
+  for(let k=0;k<firstDow;k++) html+=`<div class="day empty"></div>`;
+  for(let i=0;i<NB_JOURS;i++){
+    const st=statutJour(i);
+    const key=ymd(dayFromIndex(i));
+    const num=dayFromIndex(i).getDate();
+    let sub="";
+    if(st==="done"){ sub=STATE.notes[key].note.toFixed(0)+"/20"; }
+    else if(st==="todo"){ sub="à faire"; }
+    else if(st==="late"){ sub="rattrap."; }
+    else { sub="🔒"; }
+    html+=`<div class="day ${st}" data-i="${i}"><span class="n">${num}</span><span class="s">${sub}</span></div>`;
+  }
+  html+=`</div>`;
+  html+=`<div class="legend">
+    <span><b style="color:var(--fr-d)">●</b> à faire</span>
+    <span><b style="color:var(--an-d)">●</b> à rattraper</span>
+    <span><b style="color:var(--ok-d)">●</b> fait</span>
+    <span>🔒 pas encore</span>
+  </div>`;
+  el.innerHTML=html;
+  el.querySelectorAll(".day").forEach(d=>{
+    const i=+d.dataset.i;
+    const st=statutJour(i);
+    if(st==="todo"||st==="late"){ d.onclick=()=>lancerQCM(i); }
+    else if(st==="done"){ d.onclick=()=>lancerQCM(i); }
+  });
+}
+
+function renderSuivi(){
+  const el=document.getElementById("sec-suivi");
+  const keys=Object.keys(STATE.notes).sort();
+  let html=`<h2>Ton suivi</h2>`;
+  if(keys.length===0){ html+=`<p class="emptynote">Pas encore de note. Joue ton premier match et ta note s'affichera ici ⚽</p>`; el.innerHTML=html; return; }
+  const notes=keys.map(k=>STATE.notes[k].note);
+  const moy=notes.reduce((a,b)=>a+b,0)/notes.length;
+  const best=Math.max(...notes);
+  html+=`<div class="stat">
+    <div class="b"><div class="k">Moyenne</div><div class="val">${moy.toFixed(1)}</div></div>
+    <div class="b"><div class="k">Meilleure</div><div class="val">${best.toFixed(1)}</div></div>
+    <div class="b"><div class="k">Matchs joués</div><div class="val">${keys.length}</div></div>
+  </div>`;
+  keys.forEach(k=>{
+    const nd=STATE.notes[k];
+    const d=new Date(k+"T00:00:00");
+    const lbl=d.getDate()+" "+MOIS_FR[d.getMonth()].slice(0,4)+".";
+    html+=`<div class="row"><div class="d">${lbl}</div><div class="bar"><i style="width:${nd.note/20*100}%"></i></div><div class="v">${nd.note.toFixed(1)}/20</div></div>`;
+  });
+  el.innerHTML=html;
+}
+
+function renderFiches(){
+  const el=document.getElementById("sec-fiches");
+  let html=`<h2>Tes fiches de révision</h2><p class="mini" style="margin-bottom:14px">Relis-les autant de fois que tu veux. Coche « J'ai lu » en bas quand c'est fait.</p>`;
+  for(const m of ["maths","francais","anglais","sciences","histoire","emc"]){
+    if(FICHES.filter(f=>f.matiere===m).length===0) continue;
+    html+=`<h3 style="color:var(--${MAT[m].cls}-d);margin-top:16px">${MAT[m].ic} ${MAT[m].nom}</h3>`;
+    FICHES.filter(f=>f.matiere===m).forEach(f=>{
+      const lu=STATE.fiches[f.id];
+      html+=`<div class="fichelink" data-fiche="${f.id}"><span class="dot ${MAT[m].cls}"></span><span>${f.titre}</span><span class="go">${lu?'<span class="done-badge">lu ✓</span>':'lire ▸'}</span></div>`;
+    });
+  }
+  el.innerHTML=html;
+  el.querySelectorAll("[data-fiche]").forEach(x=>x.onclick=()=>ouvrirFiche(x.dataset.fiche));
+}
+
+/* ================= FICHE READER ================= */
+function ouvrirFiche(id){
+  const f=FICHES.find(x=>x.id===id); if(!f) return;
+  const cls=MAT[f.matiere].cls;
+  let html=`<div class="qtag ${cls}">${MAT[f.matiere].ic} ${MAT[f.matiere].nom}</div>`;
+  html+=`<div class="fiche-h" style="color:var(--${cls}-d)">${f.titre}</div>`;
+  f.sections.forEach(s=>{
+    html+=`<div class="fiche-sec"><div class="st" style="color:var(--${cls}-d)">${s.t}</div><div>${s.c}</div></div>`;
+  });
+  const lu=STATE.fiches[id];
+  html+=`<div class="readbox ${lu?'checked':''}" id="readBox"><div class="box">${lu?'✓':''}</div><div>${lu?"C'est lu, bravo ACE ! ⚽":"J'ai lu cette fiche"}</div></div>`;
+  document.getElementById("fBody").innerHTML=html;
+  document.getElementById("readBox").onclick=()=>{
+    STATE.fiches[id]=!STATE.fiches[id]; save(STATE); ouvrirFiche(id); renderFiches(); renderAccueil();
+  };
+  document.getElementById("ficheView").classList.add("on");
+  window.scrollTo(0,0);
+}
+document.getElementById("fClose").onclick=()=>document.getElementById("ficheView").classList.remove("on");
+
+/* ================= DICTÉE ================= */
+const DICTEES=[
+ {sem:1,titre:"Dictée — semaine 1",texte:"Le petit chat noir dort sur le canapé. Il ronronne doucement près du feu.",vigilance:"les accords (« petit chat noir »), le son « an »."},
+ {sem:2,titre:"Dictée — semaine 2",texte:"Ce matin, Léo a mangé une pomme rouge et il est parti à l\'école en courant.",vigilance:"« a / à », « et / est », l\'accord de « rouge »."},
+ {sem:3,titre:"Dictée — semaine 3",texte:"Les grands arbres verts bordent la rivière. Des oiseaux chantent dans leurs branches.",vigilance:"les pluriels (« grands arbres verts »), « leurs »."},
+ {sem:4,titre:"Dictée — semaine 4",texte:"Hier, nous avons visité un château fort. Nous avons vu de hautes tours et un pont-levis.",vigilance:"le passé composé, « hautes tours » au pluriel."}
+];
+let DCUR={sem:0,fautes:0,refaire:false};
+function semaineActuelle(){ const ti=todayIndex(); return ti<0?1 : ti>28?4 : semaine(ti); }
+function renderDictee(){
+  const el=document.getElementById("sec-dictee");
+  const curW=semaineActuelle();
+  let html=`<h2>La dictée de la semaine</h2><p class="mini" style="margin-bottom:14px">Donne le téléphone à un adulte : il te lit le texte, tu écris sur une feuille. À la fin, comptez les fautes ensemble.</p>`;
+  DICTEES.forEach(d=>{
+    const done=STATE.dictees[d.sem];
+    const locked=d.sem>curW;
+    html+=`<div class="card"><div class="lbl">${d.titre}</div>`;
+    if(done){
+      html+=`<div class="big">✅ Faite — <b>${done.fautes} faute${done.fautes>1?"s":""}</b></div>`;
+      html+=`<div class="dictee-texte">${d.texte}</div>`;
+      html+=`<button class="btn btn-ghost" data-refaire="${d.sem}">Refaire (ne remplace pas la note)</button>`;
+    } else if(locked){
+      html+=`<div class="mini">🔒 Disponible en semaine ${d.sem}.</div>`;
+    } else {
+      html+=`<button class="btn btn-fr" data-faire="${d.sem}">🎤 Faire la dictée (adulte)</button>`;
+    }
+    html+=`</div>`;
+  });
+  el.innerHTML=html;
+  el.querySelectorAll("[data-faire]").forEach(b=>b.onclick=()=>lancerDictee(+b.dataset.faire,false));
+  el.querySelectorAll("[data-refaire]").forEach(b=>b.onclick=()=>lancerDictee(+b.dataset.refaire,true));
+}
+function lancerDictee(sem,refaire){
+  const d=DICTEES.find(x=>x.sem===sem); if(!d) return;
+  DCUR={sem:sem,fautes:0,refaire:refaire};
+  const phrases=(d.texte.match(/[^.!?]+[.!?]*/g)||[d.texte]).map(s=>s.trim()).filter(Boolean);
+  let html=`<div class="qtag hg">🎤 ${d.titre}</div>`;
+  html+=`<p class="mini"><b>Adulte :</b> lis les phrases à voix haute, une par une. Points à surveiller : ${d.vigilance}</p>`;
+  html+=`<div class="dictee-texte-lire">`;
+  phrases.forEach((ph,idx)=>{ html+=`<div class="dphrase"><span>${ph}</span><button class="mini-listen" data-say="${idx}">🔊</button></div>`; });
+  html+=`</div>`;
+  html+=`<div class="card"><div class="lbl">Nombre de fautes</div><div class="fautes-row"><button class="fbtn" id="fMoins">−</button><div class="fnum" id="fNum">0</div><button class="fbtn" id="fPlus">+</button></div><button class="btn btn-ok" id="dSave">Enregistrer le résultat</button></div>`;
+  document.getElementById("dBody").innerHTML=html;
+  document.getElementById("dicteeView").classList.add("on");
+  window.scrollTo(0,0);
+  document.getElementById("fMoins").onclick=()=>{DCUR.fautes=Math.max(0,DCUR.fautes-1);document.getElementById("fNum").textContent=DCUR.fautes;};
+  document.getElementById("fPlus").onclick=()=>{DCUR.fautes++;document.getElementById("fNum").textContent=DCUR.fautes;};
+  document.getElementById("dSave").onclick=sauverDictee;
+  document.querySelectorAll("#dBody [data-say]").forEach(b=>b.onclick=()=>parlerFr(phrases[+b.dataset.say]));
+}
+function sauverDictee(){
+  if(!(DCUR.refaire && STATE.dictees[DCUR.sem])){ STATE.dictees[DCUR.sem]={fautes:DCUR.fautes,done:true}; save(STATE); }
+  document.getElementById("dicteeView").classList.remove("on");
+  renderDictee();
+}
+document.getElementById("dClose").onclick=()=>document.getElementById("dicteeView").classList.remove("on");
+
+/* ================= QCM ================= */
+let Q={ liste:[], idx:0, correct:0, jour:0, demo:false, faux:[] };
+
+function lancerQCM(i){
+  Q={ liste:planDuJour(i), idx:0, correct:0, jour:i, demo:false, faux:[] };
+  if(Q.liste.length===0){ alert("Aucune question disponible."); return; }
+  document.getElementById("qcm").classList.add("on");
+  window.scrollTo(0,0);
+  afficherQuestion();
+}
+function lancerDemo(){
+  const rnd=mulberry32(42);
+  const dem=[
+    BANQUE.filter(q=>q.matiere==="maths"&&q.niveau==="facile"),
+    BANQUE.filter(q=>q.matiere==="francais"&&q.niveau==="facile"),
+    BANQUE.filter(q=>q.matiere==="anglais"&&q.niveau==="facile")
+  ].map(pool=>shuffle(pool,rnd)[0]).filter(Boolean);
+  const demMix=dem.map((q,k)=>melangeChoix(q, 900+k));
+  Q={ liste:demMix, idx:0, correct:0, jour:-1, demo:true, faux:[] };
+  document.getElementById("qcm").classList.add("on"); window.scrollTo(0,0); afficherQuestion();
+}
+
+function afficherQuestion(){
+  const q=Q.liste[Q.idx];
+  const total=Q.liste.length;
+  document.getElementById("qProg").style.width=((Q.idx)/total*100)+"%";
+  document.getElementById("qCount").textContent=(Q.idx+1)+" / "+total;
+  const cls=MAT[q.matiere].cls;
+  let html=`<div class="qtag ${cls}">${MAT[q.matiere].ic} ${MAT[q.matiere].nom}</div>`;
+  html+=`<div class="qtext">${q.q}</div>`;
+  html+=`<div id="opts">`;
+  q.choix.forEach((c,k)=>{
+    html+=`<button class="opt" data-k="${k}"><span>${c}</span><span class="oic">✓</span></button>`;
+  });
+  html+=`</div><div id="fbSlot"></div>`;
+  const body=document.getElementById("qBody");
+  body.innerHTML=html;
+  window.scrollTo(0,0);
+  body.querySelectorAll(".opt").forEach(b=>b.onclick=()=>repondre(+b.dataset.k));
+}
+
+function repondre(k){
+  const q=Q.liste[Q.idx];
+  const opts=document.querySelectorAll("#opts .opt");
+  opts.forEach((b,idx)=>{
+    b.disabled=true;
+    if(idx===q.bonne){ b.classList.add("correct"); }
+    if(idx===k && k!==q.bonne){ b.classList.add("wrong"); b.querySelector(".oic").textContent="✕"; }
+  });
+  const correct=(k===q.bonne);
+  if(correct) Q.correct++; else Q.faux.push(q);
+  if(!Q.demo) majRevision(q, correct, Q.jour);
+
+  const enc=correct? ENC_OK[Math.floor(Math.random()*ENC_OK.length)] : ENC_NO[Math.floor(Math.random()*ENC_NO.length)];
+  const fb=document.createElement("div");
+  fb.className="feedback "+(correct?"good":"bad");
+  fb.innerHTML=`<div class="enc">${enc}</div><div class="expl"><b>${correct?'':'La bonne réponse : '+q.choix[q.bonne]+'.<br>'}</b>${q.expl}</div>`;
+  document.getElementById("fbSlot").appendChild(fb);
+
+  const next=document.createElement("button");
+  next.className="btn btn-fr"; next.style.marginTop="8px";
+  next.textContent=(Q.idx+1<Q.liste.length)?"Question suivante ▸":"Voir mon résultat 🎉";
+  next.onclick=suivante;
+  document.getElementById("fbSlot").appendChild(next);
+  fb.scrollIntoView({behavior:"smooth", block:"center"});
+}
+
+function suivante(){
+  if(Q.idx+1<Q.liste.length){ Q.idx++; afficherQuestion(); }
+  else finQCM();
+}
+
+function finQCM(){
+  const total=Q.liste.length;
+  const pct=Math.round(Q.correct/total*100);
+  const note=Math.round(Q.correct/total*20*10)/10;
+  document.getElementById("qProg").style.width="100%";
+  document.getElementById("qCount").textContent=total+" / "+total;
+
+  // 1er score seulement
+  if(!Q.demo){
+    const key=ymd(dayFromIndex(Q.jour));
+    if(!STATE.notes[key]){ STATE.notes[key]={note:note,pct:pct,correct:Q.correct,total:total}; }
+    save(STATE);
+  }
+
+  let msg = pct>=80?"Match parfait, ACE ! 🏆" : pct>=60?"Beau match, tu progresses ! 💪" : pct>=40?"Bon début, on continue l'entraînement ⚽" : "On révise et on rejoue, tu vas y arriver 💪";
+  let html=`<div class="result-score"><div class="note">${note.toFixed(1)}/20</div><div class="pct">${Q.correct} bonnes réponses sur ${total} · ${pct}%</div></div>`;
+  html+=`<div class="feedback good" style="text-align:center"><div class="enc">${msg}</div>${Q.demo?'<div class="expl">C\'était un exemple : ça ne compte pas dans ton suivi.</div>':'<div class="expl">Ta note est enregistrée dans l\'onglet Suivi.</div>'}</div>`;
+
+  if(Q.faux.length){
+    html+=`<h3 style="margin-top:18px">À revoir tranquillement :</h3>`;
+    Q.faux.forEach(q=>{
+      html+=`<div class="miss"><div class="mq">${MAT[q.matiere].ic} ${q.q}</div><div class="ma-line">✓ Bonne réponse : ${q.choix[q.bonne]}</div><div class="me-line">${q.expl}</div></div>`;
+    });
+    html+=`<p class="mini">Ces questions reviendront dans tes prochains QCM pour bien les retenir 👍</p>`;
+  } else if(!Q.demo){
+    html+=`<div class="card" style="text-align:center">Aucune erreur, match parfait ACE ! 🏆</div>`;
+  }
+  html+=`<button class="btn btn-ok" id="finBtn" style="margin-top:12px">Terminer</button>`;
+  document.getElementById("qBody").innerHTML=html;
+  window.scrollTo(0,0);
+  document.getElementById("finBtn").onclick=fermerQCM;
+}
+
+function fermerQCM(){
+  document.getElementById("qcm").classList.remove("on");
+  renderAccueil(); renderTest(); renderSuivi();
+}
+document.getElementById("qClose").onclick=()=>{
+  if(confirm("Quitter le match ? Ta progression ne sera pas enregistrée.")) fermerQCM();
+};
+
+/* ================= NAVIGATION ================= */
+function goTab(tab){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("on"));
+  document.getElementById("sec-"+tab).classList.add("on");
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on", b.dataset.tab===tab));
+  window.scrollTo(0,0);
+}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>goTab(b.dataset.tab));
+
+/* ================= TAILLE TEXTE ================= */
+function applyScale(s){ document.documentElement.style.setProperty("--scale",s); STATE.scale=s; save(STATE);
+  document.querySelectorAll(".aa button").forEach(b=>b.classList.toggle("on", +b.dataset.scale===s)); }
+document.querySelectorAll(".aa button").forEach(b=>b.onclick=()=>applyScale(+b.dataset.scale));
+
+/* ================= INIT ================= */
+function init(){
+  document.getElementById("avatarIcon").textContent="⚽";
+  const t=new Date();
+  const _n=Object.values(STATE.notes||{});
+  const _avg=_n.length? _n.reduce((a,b)=>a+b.note,0)/_n.length : 0;
+  const _rang=_n.length===0?"Remplaçant":_avg<10?"Remplaçant":_avg<13?"Titulaire":_avg<16?"Capitaine":"Ballon d'Or";
+  document.getElementById("todayStr").textContent=dateLisible(t)+" · "+_rang;
+  applyScale(STATE.scale||1);
+  renderAccueil(); renderTest(); renderSuivi(); renderFiches(); renderDictee();
+  if("serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
+}
+init();
+</script>
+</body>
+</html>
